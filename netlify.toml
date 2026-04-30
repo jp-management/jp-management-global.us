@@ -1,0 +1,37 @@
+[build]
+  publish = "site"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://assets.slater.app https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://connect.facebook.net https://static.hotjar.com https://cdn.matomo.cloud https://winno.matomo.cloud https://analytics.ahrefs.co https://d3e54v103j8qbb.cloudfront.net https://cdn.prod.website-files.com https://global-uploads.webflow.com https://assets.website-files.com https://tally.so; style-src 'self' 'unsafe-inline' https://cdn.prod.website-files.com https://global-uploads.webflow.com https://assets.website-files.com; img-src 'self' data: https: blob:; font-src 'self' data: https://cdn.prod.website-files.com https://global-uploads.webflow.com https://assets.website-files.com; connect-src 'self' https://cdn.prod.website-files.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://winno.matomo.cloud https://cdn.matomo.cloud https://analytics.ahrefs.co https://static.hotjar.com https://*.hotjar.com wss://*.hotjar.com https://www.facebook.com https://vz-04799be6-b62.b-cdn.net; media-src 'self' https://vz-04799be6-b62.b-cdn.net blob:; frame-src https://www.google.com https://www.googletagmanager.com https://tally.so https://www.facebook.com https://td.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self' https://tally.so;"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"

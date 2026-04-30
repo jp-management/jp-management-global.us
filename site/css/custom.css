@@ -1,0 +1,1647 @@
+/* ==========================================================================
+   JP Management - Custom Styles
+   Extracted from inline HTML styles to improve maintainability.
+   DO NOT modify the Webflow-generated style.css.
+   ========================================================================== */
+
+/* --- Footer: remove underline from current-page link --- */
+.cmp--ft-nav-link.cmp.w--current {
+  text-decoration: none !important;
+}
+
+/* --- GTM / Tracking noscript elements --- */
+.gtm-noscript-iframe {
+  display: none;
+  visibility: hidden;
+}
+
+/* --- Logo icon sizing (needs high specificity to override Webflow's .wr_ico--hd-logo.wr_ico) --- */
+.wr_ico--hd-logo.logo-width-25 {
+  width: 25%;
+}
+
+.wr_ico--hd-logo.logo-width-27 {
+  width: 27%;
+}
+
+/* --- Video styles --- */
+.video-reset {
+  border: none;
+  padding: 0;
+}
+
+.video-case-study {
+  width: 100%;
+  height: 98%;
+  margin: 0;
+  padding: 0;
+  transform: translateZ(0);
+  margin-left: -49%;
+  margin-top: -13%;
+}
+
+.video-case-study-es {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  transform: translateZ(0);
+  margin-left: -51%;
+  margin-top: 3%;
+}
+
+.video-services {
+  width: 600px;
+  max-width: 90%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.video-services-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+/* --- Text utilities --- */
+.u-text-center {
+  text-align: center;
+}
+
+.u-text-center-padded {
+  text-align: center;
+  padding: 0 1px 50px;
+  color: #333333;
+}
+
+.u-text-center-pb50 {
+  text-align: center;
+  padding-bottom: 50px;
+}
+
+.u-color-white {
+  color: white;
+}
+
+.u-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+/* --- Layout utilities --- */
+.u-width-70 {
+  width: 70%;
+}
+
+.u-bottom-20 {
+  bottom: 20px;
+}
+
+.cr--dream.cr.u-height-40vh {
+  height: 100vh;
+}
+
+/* Sticky dream text: always visible, no effects */
+.cr--dream.cr.u-height-40vh .cmp--dream {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Clean transition from sticky text to Meet Laura cases section */
+.sc--dream + .sc--cases {
+  margin-top: 3em;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Reduce gap between solution-dream cards and sticky dream text --- */
+.sc--solution-dream + .sc--dream {
+  margin-top: -4em;
+}
+.sc--solution-dream + .sc--dream .cr--dream.cr {
+  padding-top: 0;
+}
+
+.sc--solution-dream .cr--solution-dream.cr {
+  padding-bottom: 0;
+}
+
+.u-margin-top-neg17 {
+  margin-top: -17%;
+}
+
+/* --- Word-by-word fade-in effect --- */
+.fade-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.fade-word.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- About page specific (high specificity to match Webflow selectors) --- */
+.sc--hero.about-hero-reset {
+  min-height: auto;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.cr--hero.about-hero-padding {
+  padding: 8.75rem 0 4.3rem;
+}
+
+.sc--numbers.about-numbers-reset {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.cr--numbers.about-numbers-padding {
+  padding: 4rem 0 1.5rem;
+}
+
+.cd--number.about-cell-padding {
+  padding: 0.9em;
+}
+
+.h--xxl.about-number-size {
+  font-size: 3.3rem;
+}
+
+.about-label-size {
+  font-size: 1.15rem;
+}
+
+.about-scale {
+  transform: scale(1.64);
+}
+
+/* --- Globe language icon --- */
+.ico--globe {
+  display: inline-block;
+  vertical-align: middle;
+  color: inherit;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.w-dropdown-toggle:hover .ico--globe {
+  opacity: 1;
+}
+
+/* --- Language dropdown positioning & styling --- */
+.cmp--dd-nav-link.w-dropdown {
+  position: relative;
+  z-index: 900;
+}
+
+.cmp--dd-nav-link .w-dropdown-toggle {
+  cursor: pointer;
+  padding: 6px 4px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* Arrow icon: replace webflow-icons font with pure CSS chevron */
+.cmp--dd-nav-link .w-icon-dropdown-toggle {
+  position: static !important;
+  margin: 0 !important;
+  font-size: 0 !important;           /* hide the broken font icon */
+  width: auto !important;
+  height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+.cmp--dd-nav-link .w-icon-dropdown-toggle::before {
+  content: "" !important;             /* remove webflow font glyph */
+}
+.cmp--dd-nav-link .w-icon-dropdown-toggle::after {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  margin-top: -3px;
+  opacity: 0.85;
+}
+
+/* Arrow wrapper: align with globe icon */
+.cmp--dd-nav-link .wr_ico--hd-nav-link {
+  transition: transform 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-left: 2px;
+}
+
+/* Rotate arrow 180° when dropdown is open (hover or focus-within) */
+.cmp--dd-nav-link.w-dropdown:hover .wr_ico--hd-nav-link,
+.cmp--dd-nav-link.w-dropdown:focus-within .wr_ico--hd-nav-link {
+  transform: rotate(180deg) !important;
+}
+
+.cmp--dd-nav-link .w-dropdown-list {
+  position: absolute !important;
+  top: 100% !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+  min-width: max-content;
+  margin-top: 2px !important;
+  padding: 0 !important;
+  background: rgba(255, 255, 255, 0.01) !important;
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border-radius: 0 0 12px 12px !important;
+  box-shadow: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-top: none !important;
+  z-index: 9999 !important;
+}
+
+.cmp--dd-nav-link .w-dropdown-list a[data-lang] {
+  display: block;
+  padding: 10px 16px !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  color: #222 !important;
+  text-decoration: none;
+  transition: background 0.15s ease;
+  border-radius: 0;
+  margin: 0;
+  border: none;
+}
+
+.cmp--dd-nav-link .w-dropdown-list a[data-lang]:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #000 !important;
+}
+
+.cmp--dd-nav-link .w-dropdown-list a[data-lang]:last-child {
+  border-radius: 0 0 12px 12px;
+}
+
+.cmp--dd-nav-link .w-dropdown-list a[data-lang] p {
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  margin: 0;
+}
+
+/* --- Language dropdown: open on hover + click --- */
+.cmp--dd-nav-link.w-dropdown:hover > .w-dropdown-list,
+.cmp--dd-nav-link.w-dropdown:focus-within > .w-dropdown-list {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ==========================================================================
+   HOMEPAGE CONVERSION OPTIMIZATION
+   Spacing, effects, visual hierarchy & CTA prominence
+   ========================================================================== */
+
+/* --- 1. Hero Section: tighter, more impactful --- */
+.sc--home .wr_sh--home .sh--xxl {
+  font-size: 1.35rem;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
+
+/* Make hero CTA button larger and more prominent */
+.sc--home .wr_btn--home .cmp--btn {
+  transform: scale(1.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sc--home .wr_btn--home .cmp--btn:hover {
+  transform: scale(1.15);
+}
+
+/* --- 2. Revenue Share Dream Text: impactful entrance + breathing room below --- */
+.sc--dream:first-of-type .sc_b--dream {
+  padding: 2em 0 4em;
+}
+
+/* Space between Revenue Share dream text and "Your three keys" */
+.sc--dream + .sc--solution-dream {
+  padding-top: 8em;
+}
+
+/* --- 3. Strategy/Marketing/Identity Cards: tighter spacing + hover lift --- */
+.cd--solution-dream {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.cd--solution-dream:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.sc--solution-dream .h--s {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* --- 4. Case Study Card: polish + hover effect --- */
+.cd--case {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.cd--case:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 5. "What we do" Offers Section: better visual rhythm --- */
+.sc--offers .cr--offers.cr {
+  padding: 4em 0;
+}
+
+.cmp--offer {
+  transition: transform 0.3s ease;
+}
+
+.cmp--offer:hover {
+  transform: translateY(-4px);
+}
+
+/* --- 6. Comparison Section: tighter + cleaner --- */
+.sc--compares .cr--compares.cr {
+  padding: 4em 0;
+}
+
+.cd--compare.xo {
+  transition: box-shadow 0.35s ease;
+}
+
+.cd--compare.xo:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* --- 7. "Simple as that" Steps Section: reduced top spacing --- */
+.sc--solution-dream:last-of-type .cr--solution-dream.cr {
+  padding-top: 3em;
+  padding-bottom: 3em;
+}
+
+/* --- 8. FAQ Section: cleaner spacing --- */
+.sc--faqs:last-of-type .cr--faqs.cr {
+  padding: 3.5em 0;
+}
+
+/* FAQ cards subtle hover */
+.cd--faq {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cd--faq:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* --- 9. Final CTA Section: stronger visual pull --- */
+.sc--cta .cr--cta.cr {
+  padding-top: 3em;
+  padding-bottom: 3em;
+}
+
+.sc--cta .h--xl {
+  font-size: 2.8rem;
+}
+
+.sc--cta .sh--xl {
+  font-size: 1.3rem;
+  opacity: 0.9;
+}
+
+/* Pulse animation on CTA button to draw attention */
+.sc--cta .cmp--btn,
+.sc--dream .cmp--btn {
+  animation: cta-pulse 2.5s ease-in-out infinite;
+}
+
+.sc--cta .cmp--btn:hover,
+.sc--dream .cmp--btn:hover {
+  animation: none;
+  transform: scale(1.05);
+}
+
+@keyframes cta-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+/* --- 10. Scroll-reveal animation base (triggered by JS) --- */
+.reveal {
+  opacity: 0 !important;
+  transform: translateY(30px) !important;
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out !important;
+}
+
+.reveal.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Staggered reveals for card grids */
+.reveal-stagger:nth-child(1) { transition-delay: 0s; }
+.reveal-stagger:nth-child(2) { transition-delay: 0.15s; }
+.reveal-stagger:nth-child(3) { transition-delay: 0.3s; }
+.reveal-stagger:nth-child(4) { transition-delay: 0.45s; }
+
+/* --- 11. "Apply Now" mid-page button: more breathing room --- */
+.new2.btns {
+  padding: 2em 0 3em;
+}
+
+/* --- 12. Revenue/Chat section: compact to fit in one viewport --- */
+.sc--cases + .sc--faqs .cr--faqs.cr {
+  padding: 1em 0 !important;
+}
+
+.revenue-section {
+  padding: 40px 0 !important;
+}
+
+.revenue-section .revenue-stats {
+  margin-top: 1rem;
+}
+
+.revenue-section .stat-highlight {
+  font-size: 2.2rem;
+}
+
+.revenue-section .video-container {
+  margin-top: 1rem;
+}
+
+.revenue-section .responsive-video {
+  max-width: 440px;
+}
+
+.revenue-section .video-placeholder {
+  margin: 0.5rem 0;
+}
+
+.revenue-section .mt-52 {
+  margin-top: 0.5rem !important;
+}
+
+/* --- 13. Smooth scrolling for the whole page --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- 14. Better text contrast for readability --- */
+.p--l, .p--m, .p--s {
+  line-height: 1.65;
+}
+
+/* --- 15. Reduce excessive whitespace between major sections --- */
+.sc--offers + .sc--compares .cr--compares.cr {
+  padding-top: 6em;
+}
+
+.sc--compares + .sc--solution-dream .cr--solution-dream.cr {
+  padding-top: 3em;
+}
+
+/* --- 16. Case-studies: 3 equal columns (text | feedback | showcase) --- */
+.lyt--case-content.lyt {
+  display: flex;
+  flex-flow: row;
+  gap: 1.5em;
+  align-items: flex-start;
+}
+
+.cmp--case-steps.cmp {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.cmp--case-vids.cmp {
+  flex: 2 1 0%;
+  min-width: 0;
+  margin-top: 0.8em;
+}
+
+.lyt--case-vids.lyt {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5em;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.cmp--case-vid.cmp._1,
+.cmp--case-vid.cmp {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+}
+
+.wr_h--case-vid .h--s {
+  white-space: nowrap;
+}
+
+.wr_vid--case-vid.wr_vid {
+  width: 100%;
+}
+
+.wr_vid--case-vid .vid {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* Stories testimonial videos */
+.cmp--story.cmp {
+  flex: 0 0 auto;
+  width: 280px;
+}
+
+/* Results collaboration image grid — row 1: 3 imgs, row 2: 2 imgs centred */
+.lyt--results-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.5em;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2em 1em;
+}
+
+/* Row 1: 3 images spanning 2 cols each */
+.cmp--result-img.cmp:nth-child(1) { grid-column: 1 / 3; }
+.cmp--result-img.cmp:nth-child(2) { grid-column: 3 / 5; }
+.cmp--result-img.cmp:nth-child(3) { grid-column: 5 / 7; }
+
+/* Row 2: 2 images centred (offset by 1 col on each side) */
+.cmp--result-img.cmp:nth-child(4) { grid-column: 2 / 4; }
+.cmp--result-img.cmp:nth-child(5) { grid-column: 4 / 6; }
+
+.cmp--result-img.cmp {
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  border: 3px solid transparent;
+}
+
+.cmp--result-img.cmp:hover {
+  transform: translateY(-6px);
+  border-color: #ffcbe1;
+  box-shadow: 0 12px 40px rgba(255, 203, 225, 0.35);
+}
+
+.cmp--result-img.cmp img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 13px;
+}
+
+/* --- 17. ES pages: fix case-study video positioning beside text --- */
+html[lang="es"] .cmp--case-vids.cmp {
+  flex: 2 1 0%;
+  min-width: 0;
+}
+
+html[lang="es"] .wr_vid--case-vid.wr_vid {
+  width: 100%;
+}
+
+html[lang="es"] .video-case-study {
+  margin-left: 0;
+  margin-top: 0;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+html[lang="es"] .lyt--case-content.lyt {
+  align-items: center;
+}
+
+/* ==========================================================================
+   18. Mobile Responsive
+   ========================================================================== */
+
+/* --- Tablet (≤991px) --- */
+@media screen and (max-width: 991px) {
+  /* Results image grid: 2×2 + 1 centred */
+  .lyt--results-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1em;
+  }
+  .cmp--result-img.cmp:nth-child(1) { grid-column: 1 / 3; }
+  .cmp--result-img.cmp:nth-child(2) { grid-column: 3 / 5; }
+  .cmp--result-img.cmp:nth-child(3) { grid-column: 1 / 3; }
+  .cmp--result-img.cmp:nth-child(4) { grid-column: 3 / 5; }
+  .cmp--result-img.cmp:nth-child(5) { grid-column: 2 / 4; }
+
+  /* Testimonial videos: allow wrapping earlier */
+  .lyt--stories .lyt--stories,
+  .lyt--stories.lyt.w-dyn-items {
+    gap: 1.2em !important;
+  }
+
+  /* Reduce CTA text sizes */
+  .sc--cta .h--xl { font-size: 2.2rem; }
+  .sc--cta .sh--xl { font-size: 1.1rem; }
+
+  /* Header: Apply Now button sichtbar neben Burger */
+  .cmp--hd-btns.cmp {
+    display: flex !important;
+    flex: 0 0 auto !important;
+  }
+  .cmp--hd-btns .cmp--btn.cmp {
+    padding: 0.5em 1.2em !important;
+    font-size: 0.75rem !important;
+  }
+  .lyt--hd-menu.lyt {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.5em;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .lyt--hd-base.lyt {
+    gap: 0.5em;
+    align-items: center;
+    justify-content: flex-start !important;
+  }
+  /* Push burger + globe to the right, logo stays left */
+  .cmp--hd-burger.cmp {
+    margin-left: auto;
+  }
+
+  /* Mobile Globe clone: desktop-identical styling */
+  #mobile-globe-clone {
+    display: flex !important;
+    position: relative;
+    z-index: 900;
+    flex: 0 0 auto;
+    cursor: pointer;
+    flex-flow: column;
+    align-items: center;
+    padding: 0.75em 0.5em;
+  }
+  #mobile-globe-clone .w-dropdown-toggle {
+    gap: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    cursor: pointer;
+    padding: 0;
+  }
+  /* Keep arrow visible (same as desktop) */
+  #mobile-globe-clone .wr_ico--hd-nav-link {
+    display: flex !important;
+    margin-top: 3px !important;
+    margin-left: 0 !important;
+  }
+  #mobile-globe-clone .ico--hd-nav-link {
+    display: block !important;
+  }
+  /* Dropdown list: desktop glasmorphism style */
+  #mobile-globe-clone .w-dropdown-list {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: none;
+    min-width: max-content;
+    background-color: rgba(255, 255, 255, 0.01) !important;
+    -webkit-backdrop-filter: blur(2em);
+    backdrop-filter: blur(2em);
+    border-radius: 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    z-index: 9999 !important;
+  }
+  #mobile-globe-clone .w-dropdown-list a[data-lang] {
+    display: block;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    color: #222 !important;
+    text-decoration: none;
+  }
+  #mobile-globe-clone .w-dropdown-list a[data-lang]:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
+  /* Keep underline element visible like desktop */
+  #mobile-globe-clone .el--hd-nav-link {
+    display: block !important;
+  }
+
+  /* ---- Mobile Nav: hidden by default ---- */
+  nav.cmp--hd-nav.cmp {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* ==== FULL-SCREEN MENU OVERLAY ==== */
+  nav.cmp--hd-nav.cmp.menu-open {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: fixed !important;
+    top: -10px !important;
+    left: -10px !important;
+    right: -10px !important;
+    bottom: -10px !important;
+    z-index: 99999 !important;
+    /* Clean white — oversized to cover any edge gaps */
+    background: linear-gradient(180deg, var(--02-colors--pri), var(--02-colors--sec)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.7em !important;
+    padding: 0 1.5em !important;
+    overflow-y: auto !important;
+  }
+
+  /* ---- Nav links: clean pill buttons (order 1) ---- */
+  nav.cmp--hd-nav.menu-open .cmp--hd-nav-link {
+    display: block !important;
+    order: 1 !important;
+    width: 80% !important;
+    max-width: 280px !important;
+    text-align: center !important;
+    font-size: 1rem !important;
+    color: #1a1a1a !important;
+    text-decoration: none !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    font-weight: 600 !important;
+    padding: 0.85em 1.5em !important;
+    margin: 0 !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 50px !important;
+    background: rgba(255, 255, 255, 0.65) !important;
+    transition: background 0.15s ease !important;
+  }
+  nav.cmp--hd-nav.menu-open .cmp--hd-nav-link:active {
+    background: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* ---- lyt--hd-nav: flex column, center everything ---- */
+  nav.cmp--hd-nav.cmp.menu-open .lyt--hd-nav.lyt {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    gap: 0.5em !important;
+  }
+  /* Nav links group — order 1 */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-links.cmp {
+    order: 1 !important;
+    width: 80% !important;
+    max-width: 280px !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .lyt--hd-nav-links.lyt {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1em !important;
+    width: 100% !important;
+  }
+  /* Apply Now CTA — order 2 (right after links) */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns.cmp {
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 0.8em !important;
+    height: auto !important;
+    width: 80% !important;
+    max-width: 280px !important;
+    order: 2 !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .lyt--hd-nav-btns,
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .cmp--btn-group,
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .lyt--btn-group,
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .wr_btn--hd-menu {
+    display: flex !important;
+    justify-content: center !important;
+    height: auto !important;
+    width: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .cmp--btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    padding: 0.85em 2em !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    border-radius: 50px !important;
+    background: linear-gradient(135deg, #ffcbe1, #f9f9f9 50%, #c8e7ff) !important;
+    background-image: linear-gradient(135deg, #ffcbe1, #f9f9f9 50%, #c8e7ff) !important;
+    color: #1a1a1a !important;
+    text-decoration: none !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .cmp--btn *,
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .cmp--btn *::before,
+  nav.cmp--hd-nav.cmp.menu-open .cmp--hd-nav-btns .cmp--btn *::after {
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  /* ---- Language dropdown (order 3 — below Apply Now) ---- */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-top: 0.8em !important;
+    position: relative !important;
+    z-index: 10 !important;
+    order: 3 !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .el--hd-nav-link {
+    font-size: 0.95rem !important;
+    color: #1a1a1a !important;
+    opacity: 0.7 !important;
+    letter-spacing: 0.06em !important;
+  }
+  /* Language dropdown toggle — anchor for absolute list */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .w-dropdown-toggle {
+    position: relative !important;
+    cursor: pointer !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+    display: flex !important;
+  }
+  /* Arrow rotation when dropdown open */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .w-dropdown-toggle .wr_ico--hd-nav-link {
+    transition: transform 0.3s ease !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link.w--open .w-dropdown-toggle .wr_ico--hd-nav-link {
+    transform: rotate(180deg) !important;
+  }
+  /* Language dropdown list — hidden by default, absolute centered below toggle */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .w-dropdown-list {
+    display: none !important;
+    position: absolute !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: 100% !important;
+    right: auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    margin-top: 4px !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    -webkit-backdrop-filter: blur(2em) !important;
+    backdrop-filter: blur(2em) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06) !important;
+    text-align: center !important;
+    padding: 0 !important;
+    z-index: 20 !important;
+  }
+  /* Show dropdown when open */
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link.w--open .w-dropdown-list {
+    display: block !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .w-dropdown-list a,
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .w-dropdown-list a.cmp--hd-nav-link {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0.4em 0 !important;
+    text-align: center !important;
+    margin: 0 !important;
+    color: #1a1a1a !important;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    box-shadow: none !important;
+    order: unset !important;
+    transition: background 0.15s ease !important;
+  }
+  nav.cmp--hd-nav.cmp.menu-open .cmp--dd-nav-link .w-dropdown-list a:active {
+    background: rgba(0, 0, 0, 0.04) !important;
+  }
+  /* Language dropdown inner container: ID-based for max specificity */
+  #language-dropdown.lyt--dd-nav-links.lyt {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+  /* Override ALL inner elements with ID selectors */
+  #language-dropdown a.cmp--hd-nav-link {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    padding: 10px 16px !important;
+    margin: 0 !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    color: #222 !important;
+  }
+  #language-dropdown .lyt--hd-nav-link.lyt {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: center !important;
+    position: static !important;
+  }
+  #language-dropdown .wr_p--hd-nav-link.wr_p {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: center !important;
+  }
+  #language-dropdown .el--hd-nav-link.el {
+    display: none !important;
+  }
+  #language-dropdown .p--nav {
+    text-align: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    color: #222 !important;
+  }
+  #language-dropdown a.cmp--hd-nav-link:last-child {
+    border-bottom: none !important;
+  }
+  /* Hide the globe clone in header when menu is open — we use nav's own dropdown */
+  header.cmp--hd.menu-open #mobile-globe-clone {
+    display: none !important;
+  }
+
+  /* ==== JP LOGO in menu overlay ==== */
+  #menu-logo {
+    display: block !important;
+    order: 0 !important;
+    margin-bottom: 1.5em !important;
+    text-align: center !important;
+    flex: 0 0 auto !important;
+  }
+  #menu-logo img {
+    width: 80px !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+
+  /* ==== X CLOSE BUTTON — injected by JS into overlay ==== */
+  #menu-close-btn {
+    position: absolute !important;
+    top: 22px !important;
+    right: 22px !important;
+    width: 44px !important;
+    height: 44px !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  #menu-close-btn::before,
+  #menu-close-btn::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 24px !important;
+    height: 2.5px !important;
+    background: #1a1a1a !important;
+    border-radius: 2px !important;
+  }
+  #menu-close-btn::before { transform: translate(-50%, -50%) rotate(45deg) !important; }
+  #menu-close-btn::after  { transform: translate(-50%, -50%) rotate(-45deg) !important; }
+
+  /* ==== Header: keep burger visible, hide rest when open ==== */
+  .cmp--hd-burger.cmp {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .cmp--hd-btns.cmp {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  header.cmp--hd {
+    position: fixed !important;
+    z-index: 9998 !important;
+  }
+  /* Hide everything in header when menu open (overlay handles it all) */
+  header.cmp--hd.menu-open .cmp--hd-btns,
+  header.cmp--hd.menu-open .wr_btn--hd-menu,
+  header.cmp--hd.menu-open .cmp--hd-logo,
+  header.cmp--hd.menu-open .cmp--hd-burger {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  /* Kill ALL background color behind overlay when open */
+  body.menu-is-open,
+  body.menu-is-open .sc--home,
+  body.menu-is-open .sc,
+  body.menu-is-open section {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+  /* Hide decorative colored squares behind overlay */
+  body.menu-is-open .el--bg-square,
+  body.menu-is-open .cmp--bg,
+  body.menu-is-open .el--bg-overlay {
+    display: none !important;
+  }
+}
+
+/* Hide globe clone on desktop */
+@media screen and (min-width: 992px) {
+  #mobile-globe-clone {
+    display: none !important;
+  }
+/* Desktop language dropdown styles */
+  #language-dropdown { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; }
+  #language-dropdown .cmp--hd-nav-link { display: block; text-decoration: none !important; color: inherit; padding: 8px 16px; transition: all 0.2s ease; }
+  #language-dropdown .lyt--hd-nav-link { position: relative; display: inline-block; padding-bottom: 4px; }
+  #language-dropdown .el--hd-nav-link {
+    position: absolute !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 2px !important;
+    background-color: currentColor !important;
+    transform: scaleX(0) !important;
+    transform-origin: left !important;
+    transition: transform 0.3s ease !important;
+  }
+  #language-dropdown .cmp--hd-nav-link:hover .el--hd-nav-link {
+    transform: scaleX(1) !important;
+  }
+  #language-dropdown .cmp--hd-nav-link.w--current .el--hd-nav-link {
+    transform: scaleX(0) !important;
+  }
+  #language-dropdown .cmp--hd-nav-link.w--current:hover .el--hd-nav-link {
+    transform: scaleX(1) !important;
+  }
+}
+
+/* --- Mobile landscape / small tablet (≤767px) --- */
+@media screen and (max-width: 767px) {
+  /* 1. Logo: hide "MANAGEMENT" text beneath JP icon */
+  .wr_ico--hd-logo.wr_ico {
+    display: none !important;
+  }
+
+  /* 2. Dream sticky section: disable sticky, prevent overlap with cards */
+  .cr--dream.cr,
+  .cr--dream.cr.u-height-40vh {
+    height: auto !important;
+    position: relative !important;
+  }
+  .cmp--dream.cmp {
+    position: relative !important;
+    top: auto !important;
+  }
+  .sc--dream {
+    position: relative !important;
+    z-index: 1;
+  }
+  /* Reduce gap between solution-dream cards and dream text */
+  .sc--solution-dream + .sc--dream {
+    margin-top: -1em;
+  }
+  .sc--dream + .sc--cases {
+    margin-top: 1em;
+  }
+
+  /* 3. Hero video: not too big, not too small */
+  .sc--home .cmp--home-vid .vid,
+  .sc--home video {
+    max-width: 85% !important;
+    width: 85% !important;
+    margin: 0 auto;
+    display: block;
+  }
+
+  /* 4. JP Management compare card: disable scale effect + slideInLeft */
+  .sc--compares .sc_b--compares.sc_b {
+    align-items: center !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+  .sc--compares .cr--compares.cr {
+    overflow: hidden !important;
+  }
+  .lyt--compare-terms.lyt {
+    animation: none !important;
+  }
+  .cd--compare.xo {
+    margin: 0 !important;
+    overflow: hidden;
+  }
+  .cmp--compare.cmp {
+    max-width: 100%;
+    overflow: hidden;
+    transform: none !important;
+  }
+  /* Force all compare-term items visible (JS scroll-reveal won't fire without scale) */
+  .cd--compare .cmp--compare-term.cmp,
+  .cd--compare .lyt--compare-term.lyt,
+  .cd--compare .wr_ico--compare-term,
+  .cd--compare .wr_p--compare-term {
+    opacity: 1 !important;
+  }
+
+  /* 5. Footer: centre everything */
+  footer.cmp--ft .lyt--ft.lyt {
+    text-align: center !important;
+  }
+  footer.cmp--ft .lyt--ft-nav.lyt,
+  footer.cmp--ft .lyt--ft-nav-links.lyt,
+  footer.cmp--ft .lyt--ft-nav-link-groups.lyt,
+  footer.cmp--ft .lyt--ft-legal.lyt {
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  footer.cmp--ft .cmp--ft-nav-link-groups .lyt--ft-nav-links {
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  footer.cmp--ft .wr_h--ft-nav-link-group,
+  footer.cmp--ft .wr_p--ft-legal,
+  footer.cmp--ft .h--xxs,
+  footer.cmp--ft .p--xxs {
+    text-align: center !important;
+  }
+
+  /* Case-study 3-column → stacked */
+  .lyt--case-content.lyt {
+    flex-direction: column;
+    gap: 1.2em;
+  }
+  .cmp--case-steps.cmp,
+  .cmp--case-vids.cmp {
+    flex: none !important;
+    width: 100% !important;
+    min-width: 0;
+  }
+  .cmp--case-vids.cmp {
+    margin-top: 0;
+    max-width: 100% !important;
+  }
+
+  /* Videos: allow wrapping, full width */
+  .lyt--case-vids.lyt {
+    flex-wrap: wrap;
+    gap: 1em;
+  }
+  .cmp--case-vid.cmp._1,
+  .cmp--case-vid.cmp {
+    flex: none;
+    width: 100%;
+  }
+
+  /* Video headings: allow wrapping */
+  .wr_h--case-vid .h--s { white-space: normal; }
+
+  /* Homepage video: remove negative margins */
+  .video-case-study,
+  .video-case-study-es {
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    height: auto !important;
+    width: 100% !important;
+    border-radius: 12px;
+  }
+
+  /* Inline video containers: expand on mobile */
+  .cmp--case-vids.cmp .wr_vid--case-vid.wr_vid {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Results image grid: 2 columns, reset nth-child spans */
+  .lyt--results-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+    padding: 1.5em 1em;
+  }
+  .cmp--result-img.cmp:nth-child(1),
+  .cmp--result-img.cmp:nth-child(2),
+  .cmp--result-img.cmp:nth-child(3),
+  .cmp--result-img.cmp:nth-child(4),
+  .cmp--result-img.cmp:nth-child(5) { grid-column: auto; }
+
+  /* Testimonial video section: reduce gap, centre */
+  .lyt--stories.lyt.w-dyn-items {
+    gap: 1em !important;
+    justify-content: center !important;
+  }
+  .cmp--story.cmp {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  /* Modal close button: inside the modal on mobile */
+  #imageModal button {
+    top: 8px !important;
+    right: 8px !important;
+  }
+
+  /* Section spacing: tighter on mobile */
+  .sc--cta .h--xl { font-size: 2rem; }
+  .sc--cta .sh--xl { font-size: 1rem; }
+
+  /* Comparison cards: reduce padding */
+  .sc--compares .cr--compares.cr { padding: 2em 0; }
+  .sc--offers .cr--offers.cr { padding: 2em 0; }
+
+  /* "Simple as that" steps: tighter */
+  .sc--solution-dream:last-of-type .cr--solution-dream.cr {
+    padding-top: 2em;
+    padding-bottom: 2em;
+  }
+
+  /* FAQ section: tighter */
+  .sc--faqs:last-of-type .cr--faqs.cr { padding: 2em 0; }
+
+  /* Reduce space between dream text and keys section */
+  .sc--dream + .sc--solution-dream { padding-top: 3em; }
+
+  /* ES pages: stack case-study layout */
+  html[lang="es"] .cmp--case-vids.cmp {
+    flex: none !important;
+    width: 100% !important;
+  }
+  html[lang="es"] .lyt--case-content.lyt {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Strategy/Marketing/Identity cards: full width */
+  .cd--solution-dream { margin-bottom: 0.5em; }
+
+  /* Revenue/Chat section: tighter on mobile */
+  .revenue-section { padding: 20px 0 !important; }
+  .revenue-section .stat-highlight { font-size: 1.8rem; }
+
+  /* 6. "Meet Laura" case-study video: smaller + centred on mobile */
+  .sc--cases .video-case-study,
+  .sc--cases .video-case-study-es {
+    max-width: 70% !important;
+    width: 70% !important;
+    margin: 0 auto !important;
+    display: block !important;
+  }
+  .sc--cases .wr_vid--case-vid.wr_vid {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* 7. More top spacing before "You can choose... Revenue Share" section */
+  .sc--solution-dream + .sc--dream {
+    margin-top: 3em !important;
+    padding-top: 2em;
+  }
+
+  /* 8. About Us: center stats boxes on mobile */
+  .sc_b--numbers.sc_b {
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .cmp--number.cmp {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+
+  /* 9. About Us: department icons smaller + beside text (row layout) */
+  .lyt--dep.lyt {
+    flex-flow: row !important;
+    align-items: center !important;
+  }
+  .lyt--dep.lyt.reverse {
+    flex-flow: row-reverse !important;
+    align-items: center !important;
+  }
+  .wr_lot--dep-visual.wr_lot {
+    width: 4em !important;
+    height: 4em !important;
+    flex-shrink: 0 !important;
+  }
+  .cmp--dep-visual.cmp {
+    flex: 0 0 auto !important;
+  }
+  .cmp--dep-content.cmp {
+    flex: 1 1 0% !important;
+  }
+
+  /* 10a. Case Studies: less space between hero and first case */
+  .sc--hero .cr--hero.cr {
+    padding-bottom: 90px !important;
+  }
+
+  /* 10. Case Studies: videos side by side + smaller on mobile */
+  .lyt--case-vids.lyt {
+    flex-wrap: nowrap !important;
+    flex-direction: row !important;
+    gap: 0.5em !important;
+  }
+  .cmp--case-vid.cmp,
+  .cmp--case-vid.cmp._1 {
+    flex: 1 1 0% !important;
+    width: 0 !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+  .cmp--case-vid.cmp video.vid,
+  .cmp--case-vid.cmp .wr_vid--case-vid.wr_vid {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .lyt--case-content.lyt {
+    gap: 2em !important;
+  }
+  .cmp--story.cmp {
+    max-width: none !important;
+  }
+  .lyt--stories.lyt.w-dyn-items {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5em !important;
+    padding: 0.5em !important;
+  }
+  /* Center last odd item in 2-col grids (5th image, 3rd testimonial) */
+  .lyt--stories.lyt.w-dyn-items > :last-child:nth-child(odd) {
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
+    max-width: calc(50% - 0.25em) !important;
+  }
+  .lyt--results-grid > .cmp--result-img:last-child:nth-child(odd) {
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
+  }
+}
+
+
+/* --- Mobile portrait (≤479px) --- */
+@media screen and (max-width: 479px) {
+  /* Results image grid: 2 columns */
+  .lyt--results-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5em !important;
+    padding: 0.5em !important;
+  }
+  .cmp--result-img.cmp {
+    grid-column: auto !important;
+  }
+
+  /* Testimonial videos: full width, centred */
+  .cmp--story.cmp {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Tighter spacing on small screens */
+  .lyt--case-content.lyt { gap: 0.8em; }
+  .lyt--case-vids.lyt { gap: 0.8em; }
+
+  /* Hero section CTA: no scale on tiny screens */
+  .sc--home .wr_btn--home .cmp--btn {
+    transform: none;
+  }
+  .sc--home .wr_btn--home .cmp--btn:hover {
+    transform: none;
+  }
+
+  /* CTA pulse: disable on mobile to save GPU */
+  .sc--cta .cmp--btn,
+  .sc--dream .cmp--btn {
+    animation: none;
+  }
+
+  /* CTA text: smaller */
+  .sc--cta .h--xl { font-size: 1.6rem; }
+
+  /* Reduce section heading sizes */
+  .h--xl { font-size: 1.8rem !important; }
+  .h--l { font-size: 1.4rem !important; }
+  .sh--xxl { font-size: 1rem !important; }
+
+  /* Comparison section: full width cards - centered */
+  .cd--compare.xo { margin: 0 auto !important; }
+  .sc_b--compares.sc_b {
+    align-items: center !important;
+    overflow: hidden !important;
+  }
+  .cmp--compare.cmp {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .cd--compare.cd {
+    box-sizing: border-box !important;
+  }
+
+  /* Testimonial gap on smallest screens */
+  .lyt--stories.lyt.w-dyn-items {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5em !important;
+    padding: 0.5em !important;
+  }
+  .cmp--story.cmp {
+    max-width: none !important;
+    width: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Cookie Consent Banner
+   GDPR-compliant, minimal, matches JP Management design
+   ========================================================================== */
+
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  background: rgba(10, 10, 10, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.2em 1.5em;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  flex-wrap: wrap;
+  font-family: 'Poppins', sans-serif;
+  border-top: 1px solid rgba(255, 180, 212, 0.3);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.cookie-banner.visible {
+  display: flex;
+}
+
+.cookie-banner__text {
+  color: #ccc;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 680px;
+  flex: 1 1 300px;
+}
+
+.cookie-banner__text a {
+  color: #ffb4d4;
+  text-decoration: underline;
+}
+
+.cookie-banner__buttons {
+  display: flex;
+  gap: 0.6em;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.cookie-banner__btn {
+  padding: 0.55em 1.4em;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+}
+
+.cookie-banner__btn:hover {
+  transform: translateY(-1px);
+}
+
+.cookie-banner__btn--accept {
+  background: linear-gradient(135deg, #e9b8e0, #ffb4d4);
+  color: #1a1a1a;
+}
+
+.cookie-banner__btn--accept:hover {
+  box-shadow: 0 4px 16px rgba(255, 180, 212, 0.4);
+}
+
+.cookie-banner__btn--reject {
+  background: transparent;
+  color: #999;
+  border: 1px solid #444;
+}
+
+.cookie-banner__btn--reject:hover {
+  border-color: #888;
+  color: #ccc;
+}
+
+@media (max-width: 600px) {
+  .cookie-banner {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    text-align: left;
+    padding: 0.6em 0.8em;
+    gap: 0.5em;
+  }
+  .cookie-banner__text {
+    font-size: 0.7rem;
+    line-height: 1.3;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .cookie-banner__buttons {
+    flex-shrink: 0;
+    gap: 0.4em;
+    flex-wrap: nowrap;
+  }
+  .cookie-banner__btn {
+    padding: 0.4em 0.8em;
+    font-size: 0.7rem;
+    min-width: auto;
+    white-space: nowrap;
+  }
+}
+
+
+
+
+/* ── About page: fly-in stat cards on page load ── */
+@keyframes flyInUp {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.sc--numbers .cmp--number.cmp {
+  opacity: 0;
+  transform: translateY(100px);
+  animation: flyInUp 0.7s ease-out forwards !important;
+}
+.sc--numbers .cmp--number.cmp:nth-child(1) { animation-delay: 0.1s !important; }
+.sc--numbers .cmp--number.cmp:nth-child(2) { animation-delay: 0.3s !important; }
+.sc--numbers .cmp--number.cmp:nth-child(3) { animation-delay: 0.5s !important; }
+
+/* ── #meet: limit video height to match text column ── */
+#meet .cmp--case-vid .vid {
+  max-height: 420px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ── #meet: align headings Problem / Her Feedback / Showcase ── */
+#meet .cmp--case-vids.cmp {
+  margin-top: 0 !important;
+}

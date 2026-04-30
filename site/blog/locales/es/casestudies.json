@@ -1,0 +1,49 @@
+﻿{
+    "nav": {
+        "home": "Inicio",
+        "about": "Sobre nosotros",
+        "services": "Servicios",
+        "caseStudies": "Casos de éxito",
+        "applynow": "Aplica ahora",
+        "JP1": "JP - arranque",
+        "JP2": "JP - Premium",
+        "JP3": "JP - Elite",
+        "JP4": "JP - Cambiar",
+        "language": "Idioma"
+    },
+    "caseStudies": {
+        "heroTitle": "De la visión a los ingresos",
+        "heroSubTitle": "Números que cuentan la historia",
+        "asia24": "De los miedos financieros a la libertad financiera",
+        "laura": "Laura, 23",
+        "problem": "Problema",
+        "problemtext": "Una lesión obligó a Laura a dejar el voleibol. Trabajando a tiempo completo en el comercio minorista en Portugal, no le quedaba energía para el deporte, la familia ni el crecimiento personal. Se sentía atrapada.",
+        "solution": "Solución",
+        "solutiontext": "Con JP, Laura construyó una estrategia personalizada de OnlyFans basada en su pasado atlético y su personalidad auténtica, enfocándose en el contacto directo y la marca personal.",
+        "result": "Resultado",
+        "resulttext": "Hoy, Laura tiene libertad financiera. Puede viajar, invertir en su deporte y apoyar a su familia — todo trabajando en sus propios términos.",
+        "feedback": "Su Feedback",
+        "showcase": "Escaparate",
+        "julia": "Julia",
+        "fromDoubtToSuccess": "De la duda a $12K/mes",
+        "problemtext1": "Julia había intentado OnlyFans antes, pero nunca ganó lo suficiente. Se sentía estancada y quería más.",
+        "solutiontext1": "Solo llenó el formulario en el sitio web de JP. El equipo creyó en ella desde el primer día y construyó una estrategia real con ella.",
+        "resulttext1": "En solo 30 días, Julia ganó más de $12,000. ¿Su único arrepentimiento? No haber empezado antes.",
+        "realTestimonials": "Testimonios reales de nuestros creadores",
+        "realResults": "Resultados de nuestra colaboración"
+    },
+    "cta11": "¡Deja que tus sueños se hagan realidad!",
+    "cta1": "Conviértete en parte de la familia JP",
+    "cta2": "Cambia tu vida hoy",
+    "cta3": "Aplica ahora",
+    "footer": {
+        "legal": "Legal",
+        "privacyPolicy": "Política de Privacidad",
+        "termsConditions": "Términos y Condiciones",
+        "cookiesPolicy": "Política de Cookies",
+        "other": "Otros",
+        "imprint": "Aviso legal",
+        "sitemap": "Mapa del sitio",
+        "copyright": "©2026 JP Management. Todos los derechos reservados."
+    }
+}

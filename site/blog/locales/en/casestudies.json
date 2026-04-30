@@ -1,0 +1,49 @@
+﻿{
+    "nav": {
+        "home": "Home",
+        "about": "About Us",
+        "services": "Services",
+        "caseStudies": "Case Studies",
+        "applynow": "Apply Now",
+        "JP1": "JP - Starter",
+        "JP2": "JP - Premium",
+        "JP3": "JP - Elite",
+        "JP4": "JP - Switch",
+        "language": "Language"
+    },
+    "caseStudies": {
+        "heroTitle": "From Vision to Revenue",
+        "heroSubTitle": "Numbers that tell the story",
+        "laura": "Laura, 23",
+        "asia24": "From Financial Fears to Financial Freedom",
+        "problem": "Problem",
+        "problemtext": "An injury forced Laura to give up volleyball. Working full-time in retail in Portugal, she had no energy left for sports, family, or personal growth. She felt stuck and at her limit.",
+        "solution": "Solution",
+        "solutiontext": "With JP, Laura built a personalized OnlyFans strategy around her athletic background and authentic personality, focusing on direct engagement and personal branding.",
+        "result": "Result",
+        "resulttext": "Today, Laura has financial freedom. She can travel, invest in her sport, and support her family — all while working on her own terms.",
+        "feedback": "Her Feedback",
+        "showcase": "Showcase",
+        "julia": "Julia",
+        "fromDoubtToSuccess": "From Self-Doubt to $12K/Month",
+        "problemtext1": "Julia had tried OnlyFans before but never made enough money. She felt stuck and wanted more.",
+        "solutiontext1": "She filled out the form on JP's website. The team believed in her from day one and built a real strategy with her.",
+        "resulttext1": "In just 30 days, Julia made over $12,000. Her only regret? Not starting sooner.",
+        "realTestimonials": "Real testimonials from our creators",
+        "realResults": "Results from our collaboration"
+    },
+    "cta11": "Let your dreams come true! ",
+    "cta1": "Become part of the JP Family",
+    "cta2": "Change your life today",
+    "cta3": "Apply Now",
+    "footer": {
+        "legal": "Legal",
+        "privacyPolicy": "Privacy Policy",
+        "termsConditions": "Terms & Conditions",
+        "cookiesPolicy": "Cookies Policy",
+        "other": "Other",
+        "imprint": "Imprint",
+        "sitemap": "Sitemap",
+        "copyright": "©2026 JP Management. All rights reserved."
+    }
+}

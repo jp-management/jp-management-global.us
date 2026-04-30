@@ -1,0 +1,41 @@
+﻿{
+    "nav": {
+        "home": "Home",
+        "about": "About Us",
+        "services": "Services",
+        "caseStudies": "Case Studies",
+        "applynow": "Apply Now",
+        "JP1": "JP - Starter",
+        "JP2": "JP - Premium",
+        "JP3": "JP - Elite",
+        "JP4": "JP - Switch",
+        "language": "Language"
+    },
+    "imprint": {
+        "Imprint": "Imprint",
+        "Table of Contents": "Table of Contents",
+        "Contact Address": "Contact Address",
+        "Disclaimer": "Disclaimer",
+        "Company name": "Company name",
+        "Disclaimer for External Links": "Disclaimer for External Links",
+        "Copyright": "Copyright",
+        "Website": "Website",
+        "Email": "Email",
+        "JP Management": "JP Management",
+        "DisclaimerText": "The author assumes no warranty regarding the accuracy, precision, currentness, reliability, and completeness of the information.",
+        "DisclaimerText2": "Liability claims against the author due to material or immaterial damages which resulted from access to or use or non-use of the published information, through misuse of the connection, or through technical disruptions, are excluded.",
+        "DisclaimerText3": "All offers are non-binding. The author expressly reserves the right to change, supplement, delete parts of the pages or the entire offer, or to temporarily or permanently cease publication without special announcement.",
+        "DisclaimerText4": "References and links to third-party websites are outside our area of responsibility. Any responsibility for such websites is declined. Access to and use of such websites are at the user's own risk.",
+        "CopyrightText": "The copyright and all other rights to content, images, photos, or other files on this website belong exclusively to the Company JP Management or the specifically named rights holders. For the reproduction of any elements, the written consent of the copyright holder must be obtained in advance."
+    },
+    "footer": {
+        "legal": "Legal",
+        "privacyPolicy": "Privacy Policy",
+        "termsConditions": "Terms & Conditions",
+        "cookiesPolicy": "Cookies Policy",
+        "other": "Other",
+        "imprint": "Imprint",
+        "sitemap": "Sitemap",
+        "copyright": "©2026 JP Management. All rights reserved."
+    }
+}

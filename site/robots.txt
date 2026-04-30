@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jp-management-global.com/sitemap.xml
+
+# Block internal/system files
+Disallow: /678bc20f1b45caf51b73ea4d/
+Disallow: /npm/
+Disallow: /slater/
+Disallow: /gh/
+Disallow: /js/
+Disallow: /locales/
+Disallow: /.trash/
+Disallow: /thank-you
+Disallow: /es/thank-you
+Disallow: /Casestudies/

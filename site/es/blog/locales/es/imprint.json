@@ -1,0 +1,41 @@
+﻿{
+    "nav": {
+        "home": "Inicio",
+        "about": "Sobre nosotros",
+        "services": "Servicios",
+        "caseStudies": "Casos de éxito",
+        "applynow": "Aplica ahora",
+        "JP1": "JP - Starter",
+        "JP2": "JP - Premium",
+        "JP3": "JP - Elite",
+        "JP4": "JP - Switch",
+        "language": "Idioma"
+    },
+    "imprint": {
+        "Imprint": "Aviso legal",
+        "Table of Contents": "Tabla de contenidos",
+        "Contact Address": "Dirección de contacto",
+        "Disclaimer": "Descargo de responsabilidad",
+        "Disclaimer for External Links": "Descargo para enlaces externos",
+        "Copyright": "Derechos de autor",
+        "Company name": "Nombre de la empresa",
+        "Website": "Sitio web",
+        "Email": "Correo electrónico",
+        "JP Management": "JP Management",
+        "DisclaimerText": "El autor no asume ninguna garantía respecto a la exactitud, precisión, actualidad, fiabilidad y exhaustividad de la información.",
+        "DisclaimerText2": "Se excluyen las reclamaciones de responsabilidad contra el autor por daños materiales o inmateriales que resulten del acceso o uso o no uso de la información publicada, por uso indebido de la conexión o por interrupciones técnicas.",
+        "DisclaimerText3": "Todas las ofertas no son vinculantes. El autor se reserva expresamente el derecho de cambiar, complementar, eliminar partes de las páginas o la oferta completa, o de suspender temporal o permanentemente la publicación sin previo aviso.",
+        "DisclaimerText4": "Las referencias y enlaces a sitios web de terceros están fuera de nuestra área de responsabilidad. Se rechaza cualquier responsabilidad por dichos sitios web. El acceso y uso de dichos sitios web se realiza bajo el propio riesgo del usuario.",
+        "CopyrightText": "Los derechos de autor y todos los demás derechos sobre el contenido, imágenes, fotos u otros archivos de este sitio web pertenecen exclusivamente a la empresa JP Management o a los titulares de derechos específicamente nombrados. Para la reproducción de cualquier elemento, se debe obtener previamente el consentimiento por escrito del titular de los derechos de autor."
+    },
+    "footer": {
+        "legal": "Legal",
+        "privacyPolicy": "Política de Privacidad",
+        "termsConditions": "Términos y Condiciones",
+        "cookiesPolicy": "Política de Cookies",
+        "other": "Otros",
+        "imprint": "Aviso legal",
+        "sitemap": "Mapa del sitio",
+        "copyright": "©2026 JP Management. Todos los derechos reservados."
+    }
+}

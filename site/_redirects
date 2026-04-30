@@ -1,0 +1,21 @@
+# /en/* -> /* (EN pages moved to root)
+/en                              /                          301!
+/en/                             /                          301!
+/en/index.html                   /                          301!
+/en/index-new.html               /                          301!
+/en/*.html                       /:splat                    301!
+/en/*                            /:splat                    301!
+
+# Spanish URL aliases
+/es/start                        /es/empezar.html           301!
+/es/start.html                   /es/empezar.html           301!
+/es/apply                        /es/aplicar.html           301!
+/es/apply.html                   /es/aplicar.html           301!
+/es/join                         /es/unirse.html            301!
+/es/join.html                    /es/unirse.html            301!
+/es/contact                      /es/empezar.html           301!
+/es/contact.html                 /es/empezar.html           301!
+
+# Strip .html from canonical URLs
+/index.html                      /                          301!
+/*.html                          /:splat                    301!

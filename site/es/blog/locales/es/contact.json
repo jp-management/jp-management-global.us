@@ -1,0 +1,39 @@
+﻿{
+    "nav": {
+        "home": "Inicio",
+        "about": "Sobre nosotros",
+        "services": "Servicios",
+        "caseStudies": "Casos de éxito",
+        "applynow": "Aplica ahora",
+        "JP1": "JP - arranque",
+        "JP2": "JP - Premium",
+        "JP3": "JP - Elite",
+        "JP4": "JP - Cambiar",
+        "language": "Idioma"
+    },
+    "contact": {
+        "heroTitle": "Aplica ahora para trabajar con JP",
+        "heroSubTitle": "¿Tienes preguntas? Aquí tienes las respuestas.",
+        "faqsTitle": "Preguntas frecuentes: ¿Listo para JP?",
+        "faqsSubTitle": "Lo que necesitas saber sobre una carrera en JP",
+        "faq1": "¿Cuánto tiempo necesito invertir?",
+        "faq2": "¿Cuánto tiempo pasará hasta que vea resultados?",
+        "faq3": "¿Cuál es la duración del contrato?",
+        "faq4": "¿En qué plataformas de redes sociales estaré activa?",
+        "faq5": "¿Permaneceré anónima en mi país de origen?",
+        "faq6": "¿Quién es el propietario de los derechos de mi contenido?"
+    },
+    "cta1": "Conviértete en parte de la familia JP",
+    "cta2": "15 minutos que cambiarán tu vida",
+    "cta3": "Aplica ahora",
+    "footer": {
+        "legal": "Legal",
+        "privacyPolicy": "Política de Privacidad",
+        "termsConditions": "Términos y Condiciones",
+        "cookiesPolicy": "Política de Cookies",
+        "other": "Otros",
+        "imprint": "Aviso legal",
+        "sitemap": "Mapa del sitio",
+        "copyright": "©2026 JP Management. Todos los derechos reservados."
+    }
+}

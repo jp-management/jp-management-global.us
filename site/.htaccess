@@ -1,0 +1,87 @@
+RewriteEngine On
+RewriteBase /
+
+Options -MultiViews
+
+# ============================================
+# Security Headers
+# ============================================
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://assets.slater.app https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://connect.facebook.net https://static.hotjar.com https://cdn.matomo.cloud https://winno.matomo.cloud https://analytics.ahrefs.co https://d3e54v103j8qbb.cloudfront.net https://cdn.prod.website-files.com https://global-uploads.webflow.com https://assets.website-files.com https://tally.so; style-src 'self' 'unsafe-inline' https://cdn.prod.website-files.com https://global-uploads.webflow.com https://assets.website-files.com; img-src 'self' data: https: blob:; font-src 'self' data: https://cdn.prod.website-files.com https://global-uploads.webflow.com https://assets.website-files.com; connect-src 'self' https://cdn.prod.website-files.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://winno.matomo.cloud https://cdn.matomo.cloud https://analytics.ahrefs.co https://static.hotjar.com https://*.hotjar.com wss://*.hotjar.com https://www.facebook.com https://vz-04799be6-b62.b-cdn.net; media-src 'self' https://vz-04799be6-b62.b-cdn.net blob:; frame-src https://www.google.com https://www.googletagmanager.com https://tally.so https://www.facebook.com https://td.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self' https://tally.so;"
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ============================================
+# GZIP Compression
+# ============================================
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml text/xml application/xml
+</IfModule>
+
+# ============================================
+# Browser Caching
+# ============================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+</IfModule>
+
+# ============================================
+# 301 Redirects: /en/* -> /* (EN pages moved to root)
+# ============================================
+RewriteRule ^en/?$ https://jp-management-global.com/ [R=301,L]
+RewriteRule ^en/index\.html$ https://jp-management-global.com/ [R=301,L]
+RewriteRule ^en/index-new\.html$ https://jp-management-global.com/ [R=301,L]
+
+RewriteCond %{REQUEST_URI} ^/en/(.+)\.html$ [NC]
+RewriteRule ^en/(.+)\.html$ https://jp-management-global.com/$1 [R=301,L]
+
+RewriteCond %{REQUEST_URI} ^/en/(.+)$ [NC]
+RewriteCond %{DOCUMENT_ROOT}/en/$1 !-f
+RewriteCond %{DOCUMENT_ROOT}/en/$1 !-d
+RewriteRule ^en/(.+)$ https://jp-management-global.com/$1 [R=301,L]
+
+# ============================================
+# URL Consistency: EN/ES parallel paths
+# Map English URL patterns to their Spanish equivalents
+# ============================================
+RewriteRule ^es/start(\.html)?$ /es/empezar.html [R=301,L]
+RewriteRule ^es/apply(\.html)?$ /es/aplicar.html [R=301,L]
+RewriteRule ^es/join(\.html)?$ /es/unirse.html [R=301,L]
+RewriteRule ^es/contact(\.html)?$ /es/empezar.html [R=301,L]
+
+# ============================================
+# Redirect /index or /index.html to root
+# ============================================
+RewriteCond %{THE_REQUEST} /index(\.html)?\s [NC]
+RewriteRule ^index(\.html)?$ https://jp-management-global.com/ [R=301,L]
+
+# ============================================
+# Clean URLs: Remove .html extension
+# ============================================
+RewriteCond %{THE_REQUEST} \s([^\s]+?)\.html[\s?] [NC]
+RewriteRule ^ %1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.*)/?$ $1.html [L]

@@ -12,7 +12,14 @@
   // Placeholder webhook. Replace with the real n8n webhook URL on jpn8n.eu
   // once Paul wires the workflow. Format expected:
   //   https://jpn8n.eu/webhook/<uuid>
+  // n8n's Webhook node should be configured: Method=POST, Binary Data=true,
+  // Property Name=photos (or read each photo_1..photo_5 from $binary).
   var JP_WEBHOOK_URL = 'https://jpn8n.eu/webhook/REPLACE-ME-jp-management-global-apply';
+
+  // Image upload constraints
+  var MAX_IMAGES = 5;
+  var MAX_IMAGE_BYTES = 5 * 1024 * 1024;       // 5 MB per image
+  var MAX_TOTAL_BYTES = 25 * 1024 * 1024;      // 25 MB combined
 
   // Where to send the user after a successful submit (per language)
   var THANK_YOU_URLS = {
@@ -38,6 +45,7 @@
       age: 'Age',
       submit: 'Submit Application',
       submitting: 'Submitting...',
+      uploading: 'Uploading photos...',
       successTitle: "We've got your application",
       successText: "Our team will reach out within 12 hours via WhatsApp or Telegram. Check your inbox - we just sent a confirmation.",
       successCta: 'Close',
@@ -45,6 +53,13 @@
       errorRequired: 'Required',
       errorEmail: 'Enter a valid email',
       errorAge: 'Must be 18 or older',
+      images: 'Photos (5)',
+      imagesHint: 'Add up to 5 photos: portrait + full body. JPG/PNG/WEBP, 5 MB max each.',
+      imagesMeta: '{n}/' + MAX_IMAGES + ' photos',
+      errorImages: 'Add at least 1 photo',
+      errorImageType: 'Only JPG, PNG, or WEBP',
+      errorImageSize: 'Each photo must be under 5 MB',
+      errorTotalSize: 'Total upload size must be under 25 MB',
       footer: 'By submitting you agree to our <a href="/Privacy-Policy">Privacy Policy</a>. We never share your data.'
     },
     es: {
@@ -61,6 +76,7 @@
       age: 'Edad',
       submit: 'Enviar Aplicacion',
       submitting: 'Enviando...',
+      uploading: 'Subiendo fotos...',
       successTitle: 'Hemos recibido tu aplicacion',
       successText: 'Nuestro equipo se pondra en contacto en menos de 12 horas por WhatsApp o Telegram. Revisa tu bandeja - acabamos de enviar una confirmacion.',
       successCta: 'Cerrar',
@@ -68,6 +84,13 @@
       errorRequired: 'Obligatorio',
       errorEmail: 'Introduce un email valido',
       errorAge: 'Debes tener 18 o mas',
+      images: 'Fotos (5)',
+      imagesHint: 'Anade hasta 5 fotos: retrato + cuerpo entero. JPG/PNG/WEBP, max 5 MB cada una.',
+      imagesMeta: '{n}/' + MAX_IMAGES + ' fotos',
+      errorImages: 'Anade al menos 1 foto',
+      errorImageType: 'Solo JPG, PNG o WEBP',
+      errorImageSize: 'Cada foto debe ser menor a 5 MB',
+      errorTotalSize: 'El tamano total debe ser menor a 25 MB',
       footer: 'Al enviar aceptas nuestra <a href="/es/Privacy-Policy">Politica de Privacidad</a>. Nunca compartimos tus datos.'
     }
   };
@@ -194,6 +217,22 @@
               '<input id="jp-f-age" name="age" type="number" min="18" max="99" required>' +
               '<div class="jp-field-error">' + t.errorAge + '</div>' +
             '</div>' +
+            '<div class="jp-field jp-field-images">' +
+              '<label>' + t.images + '</label>' +
+              '<p class="jp-images-hint">' + t.imagesHint + '</p>' +
+              '<div class="jp-image-grid" id="jp-image-grid">' +
+                (function () {
+                  var slots = '';
+                  for (var i = 0; i < MAX_IMAGES; i++) {
+                    slots += '<div class="jp-image-slot" data-slot="' + i + '">+</div>';
+                  }
+                  return slots;
+                })() +
+              '</div>' +
+              '<input type="file" id="jp-image-input" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
+              '<div class="jp-images-meta" id="jp-images-meta">' + t.imagesMeta.replace('{n}', '0') + '</div>' +
+              '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
+            '</div>' +
             '<button type="submit" id="jp-apply-submit">' + t.submit + '</button>' +
             '<p class="jp-apply-footer">' + t.footer + '</p>' +
           '</form>' +
@@ -205,6 +244,156 @@
           '</div>' +
         '</div>' +
       '</div>';
+  }
+
+  // ============================================================
+  // image upload state
+  // ============================================================
+  var uploadedImages = []; // array of {file, dataUrl}
+
+  function bytesHuman(b) {
+    if (b > 1024 * 1024) return (b / 1024 / 1024).toFixed(1) + ' MB';
+    if (b > 1024) return Math.round(b / 1024) + ' KB';
+    return b + ' B';
+  }
+
+  function totalUploadedBytes() {
+    return uploadedImages.reduce(function (s, x) { return s + x.file.size; }, 0);
+  }
+
+  function showFormError(msg) {
+    var e = $('#jp-form-error');
+    if (!e) return;
+    e.textContent = msg;
+    e.classList.add('is-visible');
+  }
+
+  function clearFormError() {
+    var e = $('#jp-form-error');
+    if (!e) return;
+    e.textContent = '';
+    e.classList.remove('is-visible');
+  }
+
+  function renderImageGrid() {
+    var grid = $('#jp-image-grid');
+    if (!grid) return;
+    var slots = grid.querySelectorAll('.jp-image-slot');
+    Array.prototype.forEach.call(slots, function (slot, idx) {
+      slot.innerHTML = '';
+      slot.classList.remove('has-file');
+      var img = uploadedImages[idx];
+      if (img) {
+        slot.classList.add('has-file');
+        var thumb = document.createElement('img');
+        thumb.src = img.dataUrl;
+        thumb.alt = 'photo-' + (idx + 1);
+        var rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'jp-slot-remove';
+        rm.setAttribute('aria-label', 'Remove photo');
+        rm.textContent = '×';
+        rm.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadedImages.splice(idx, 1);
+          renderImageGrid();
+        });
+        slot.appendChild(thumb);
+        slot.appendChild(rm);
+      } else {
+        slot.textContent = '+';
+      }
+    });
+    var meta = $('#jp-images-meta');
+    if (meta) meta.textContent = t.imagesMeta.replace('{n}', String(uploadedImages.length));
+    var fieldEl = grid.closest('.jp-field-images');
+    if (fieldEl) fieldEl.classList.remove('is-invalid');
+  }
+
+  function readAsDataURL(file) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () { resolve(r.result); };
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function addFiles(fileList) {
+    if (!fileList || !fileList.length) return;
+    var files = Array.prototype.slice.call(fileList);
+    clearFormError();
+    var validTypes = /^image\/(jpe?g|png|webp)$/i;
+
+    var room = MAX_IMAGES - uploadedImages.length;
+    if (files.length > room) files = files.slice(0, room);
+
+    var promises = files.map(function (file) {
+      if (!validTypes.test(file.type)) {
+        showFormError(t.errorImageType);
+        return Promise.resolve(null);
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        showFormError(t.errorImageSize);
+        return Promise.resolve(null);
+      }
+      return readAsDataURL(file).then(function (dataUrl) {
+        return { file: file, dataUrl: dataUrl };
+      });
+    });
+
+    Promise.all(promises).then(function (results) {
+      results.forEach(function (r) { if (r) uploadedImages.push(r); });
+      // Cap at MAX_IMAGES
+      uploadedImages = uploadedImages.slice(0, MAX_IMAGES);
+      // Combined size check
+      if (totalUploadedBytes() > MAX_TOTAL_BYTES) {
+        // pop the last added until under the limit
+        while (uploadedImages.length && totalUploadedBytes() > MAX_TOTAL_BYTES) {
+          uploadedImages.pop();
+        }
+        showFormError(t.errorTotalSize);
+      }
+      renderImageGrid();
+    });
+  }
+
+  function bindImageHandlers() {
+    var grid = $('#jp-image-grid');
+    var input = $('#jp-image-input');
+    if (!grid || !input) return;
+
+    grid.addEventListener('click', function (e) {
+      var slot = e.target.closest('.jp-image-slot');
+      if (!slot) return;
+      if (slot.classList.contains('has-file')) return;
+      input.click();
+    });
+
+    input.addEventListener('change', function () {
+      addFiles(input.files);
+      input.value = '';
+    });
+
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      grid.addEventListener(ev, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        grid.classList.add('is-dragging');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+      grid.addEventListener(ev, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        grid.classList.remove('is-dragging');
+      });
+    });
+    grid.addEventListener('drop', function (e) {
+      var dt = e.dataTransfer;
+      if (dt && dt.files) addFiles(dt.files);
+    });
   }
 
   // ============================================================
@@ -239,6 +428,8 @@
       e.target.classList.remove('is-invalid');
     });
 
+    bindImageHandlers();
+
     return modalEl;
   }
 
@@ -247,6 +438,10 @@
     document.body.classList.add('jp-apply-locked');
     modalEl.classList.add('is-open');
     $('#jp-apply-modal').classList.remove('is-success');
+    // Reset image state on each open
+    uploadedImages = [];
+    renderImageGrid();
+    clearFormError();
     setTimeout(function () { var f = $('#jp-f-name'); if (f) f.focus(); }, 280);
   }
 
@@ -292,6 +487,14 @@
         valid = false;
       }
     });
+    // Image validation (at least 1)
+    if (uploadedImages.length < 1) {
+      var imgField = $('#jp-image-grid')?.closest('.jp-field-images');
+      if (imgField) imgField.classList.add('is-invalid');
+      showFormError(t.errorImages);
+      valid = false;
+    }
+
     if (!valid) return;
 
     // Normalize
@@ -305,34 +508,36 @@
       page_title: document.title,
       referrer: document.referrer || '',
       submitted_at: new Date().toISOString(),
-      utm: getUtmParams()
+      utm_json: JSON.stringify(getUtmParams()),
+      photo_count: String(uploadedImages.length)
+    });
+
+    // Build multipart FormData (n8n webhook reads this natively)
+    var fd = new FormData();
+    Object.keys(enriched).forEach(function (k) { fd.append(k, enriched[k]); });
+    uploadedImages.forEach(function (img, idx) {
+      // photo_1 ... photo_5 with original filename
+      fd.append('photo_' + (idx + 1), img.file, img.file.name || ('photo_' + (idx + 1) + '.jpg'));
     });
 
     // Submit
     var btn = $('#jp-apply-submit');
     btn.disabled = true;
     var origText = btn.textContent;
-    btn.textContent = t.submitting;
+    btn.textContent = uploadedImages.length ? t.uploading : t.submitting;
 
     fetch(JP_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(enriched),
-      // Use no-cors fallback so webhook misconfig doesn't block UX
+      // Note: do NOT set Content-Type manually; browser sets the multipart boundary.
+      body: fd,
       mode: 'cors'
     }).then(function (res) {
       return onSuccess(enriched);
     }).catch(function (err) {
-      // If CORS fails on a real webhook, try beacon as last resort and still treat as success
-      // (n8n webhooks usually return 200 with no CORS headers - browsers treat as opaque error).
-      try {
-        if (navigator.sendBeacon) {
-          var blob = new Blob([JSON.stringify(enriched)], { type: 'application/json' });
-          navigator.sendBeacon(JP_WEBHOOK_URL, blob);
-        }
-      } catch (_) {}
-      // We still mark success - the webhook *probably* received it.
-      // If Paul wants strict failure handling, swap this to call showError(t.errorGeneric).
+      // n8n webhooks usually 200 without CORS headers -> opaque error.
+      // Treat that as a success since the request typically reached the server.
+      // (For a hard failure we'd want a JSON callback URL, but the placeholder
+      // setup matches n8n's default response behavior.)
       onSuccess(enriched);
     }).finally(function () {
       btn.disabled = false;

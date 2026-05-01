@@ -97,6 +97,59 @@ fbq('track', 'Lead');
       .ty-actions a { text-decoration: none; }
       .cta-row { display: flex; flex-direction: column; gap: .5rem; align-items: center; justify-content: center; }
 
+      /* Thank-you video placeholder. Replace the <div class="ty-video-placeholder">
+         block in the markup with a real <video class="ty-video">...</video> when ready. */
+      .ty-video-wrap {
+        margin: .5rem auto 1.25rem;
+        width: min(640px, 92%);
+      }
+      .ty-video-wrap video.ty-video,
+      .ty-video-wrap .ty-video-placeholder {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 18px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08);
+        background: linear-gradient(135deg, rgba(255,177,212,.18), rgba(177,212,255,.18));
+      }
+      .ty-video-wrap video.ty-video { display: block; object-fit: cover; }
+      .ty-video-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .35rem;
+        color: rgba(255,255,255,.85);
+        font-weight: 500;
+        text-align: center;
+        padding: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .ty-video-placeholder::before {
+        content: "";
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, rgba(255,177,212,.28), rgba(177,212,255,.28));
+        opacity: .9;
+        z-index: 0;
+      }
+      .ty-video-placeholder > * { position: relative; z-index: 1; }
+      .ty-video-placeholder .ty-play {
+        width: 64px; height: 64px; border-radius: 50%;
+        display: grid; place-items: center;
+        background: rgba(255,255,255,.18);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,.25);
+        box-shadow: 0 12px 30px rgba(0,0,0,.35);
+        margin-bottom: .35rem;
+      }
+      .ty-video-placeholder .ty-play svg {
+        width: 28px; height: 28px;
+        fill: #fff;
+        margin-left: 4px; /* optical centering for play triangle */
+      }
+      .ty-video-placeholder p { margin: 0; font-size: 1rem; }
+      .ty-video-placeholder small { opacity: .75; font-size: .82rem; }
+
       .btn-telegram {
         display: inline-flex;
         align-items: center;
@@ -421,6 +474,24 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
           <div class="ty-eyebrow">Application received</div>
           <h1 class="ty-title"><span>Thank You!</span></h1>
           <p class="ty-message">Your application is in! To get started right away, message <strong>Laura</strong> directly &mdash; she'll personally walk you through everything.</p>
+        </div>
+
+        <!-- =====================================================================
+             THANK-YOU VIDEO  (placeholder - replace when video is ready)
+             To go live: replace this whole .ty-video-wrap block with:
+               <div class="ty-video-wrap">
+                 <video class="ty-video" controls playsinline preload="metadata"
+                        poster="/img/og-image.jpg">
+                   <source src="/videos/thank-you-en.mp4" type="video/mp4">
+                 </video>
+               </div>
+             ===================================================================== -->
+        <div class="ty-video-wrap">
+          <div class="ty-video-placeholder" aria-label="Thank-you video coming soon">
+            <div class="ty-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <p>Personal thank-you video</p>
+            <small>(coming soon)</small>
+          </div>
         </div>
 
         <figure class="ty-figure" aria-label="Laura avatar">

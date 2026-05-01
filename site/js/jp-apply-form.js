@@ -54,6 +54,8 @@
       errorRequired: 'Required',
       errorEmail: 'Enter a valid email',
       errorAge: 'Must be 18 or older',
+      errorInstagram: 'Letters, numbers, "." and "_" only',
+      errorTelegram: 'Letters, numbers and "_" only (5-32 chars)',
       images: 'Photos',
       imagesHint: 'Min ' + MIN_IMAGES + ', up to ' + MAX_IMAGES + ' photos. Portrait + full body. JPG/PNG/WEBP, 5 MB each.',
       imagesMeta: '{n}/' + MAX_IMAGES + ' (min ' + MIN_IMAGES + ')',
@@ -85,6 +87,8 @@
       errorRequired: 'Obligatorio',
       errorEmail: 'Introduce un email valido',
       errorAge: 'Debes tener 18 o mas',
+      errorInstagram: 'Solo letras, numeros, "." y "_"',
+      errorTelegram: 'Solo letras, numeros y "_" (5-32 caracteres)',
       images: 'Fotos',
       imagesHint: 'Min ' + MIN_IMAGES + ', max ' + MAX_IMAGES + ' fotos. Retrato + cuerpo entero. JPG/PNG/WEBP, 5 MB cada una.',
       imagesMeta: '{n}/' + MAX_IMAGES + ' (min ' + MIN_IMAGES + ')',
@@ -179,69 +183,61 @@
             '<p class="jp-apply-sub">' + t.sub + '</p>' +
           '</div>' +
           '<form id="jp-apply-form" novalidate>' +
-            '<div class="jp-grid">' +
-              // ---- LEFT COLUMN: contact fields ----
-              '<div class="jp-col-left">' +
-                '<div class="jp-field">' +
-                  '<label for="jp-f-name">' + t.name + '</label>' +
-                  '<input id="jp-f-name" name="name" type="text" autocomplete="name" required>' +
-                  '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-                '</div>' +
-                '<div class="jp-field">' +
-                  '<label for="jp-f-email">' + t.email + '</label>' +
-                  '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
-                  '<div class="jp-field-error">' + t.errorEmail + '</div>' +
-                '</div>' +
-                '<div class="jp-field">' +
-                  '<label for="jp-f-country">' + t.country + '</label>' +
-                  '<select id="jp-f-country" name="country" required>' +
-                    '<option value="">' + t.countryPlaceholder + '</option>' +
-                    options +
-                  '</select>' +
-                  '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-                '</div>' +
-                '<div class="jp-row-2">' +
-                  '<div class="jp-field">' +
-                    '<label for="jp-f-phone">' + t.phone + '</label>' +
-                    '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 ..." required>' +
-                    '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-                  '</div>' +
-                  '<div class="jp-field">' +
-                    '<label for="jp-f-age">' + t.age + '</label>' +
-                    '<input id="jp-f-age" name="age" type="number" min="18" max="99" required>' +
-                    '<div class="jp-field-error">' + t.errorAge + '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="jp-row-2">' +
-                  '<div class="jp-field">' +
-                    '<label for="jp-f-instagram">' + t.instagram + '</label>' +
-                    '<div class="jp-prefix-input" data-prefix="@">' +
-                      '<input id="jp-f-instagram" name="instagram" type="text" required>' +
-                    '</div>' +
-                    '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-                  '</div>' +
-                  '<div class="jp-field">' +
-                    '<label for="jp-f-telegram">' + t.telegram + '</label>' +
-                    '<div class="jp-prefix-input" data-prefix="@">' +
-                      '<input id="jp-f-telegram" name="telegram" type="text" required>' +
-                    '</div>' +
-                    '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-                  '</div>' +
-                '</div>' +
+            '<div class="jp-field">' +
+              '<label for="jp-f-name">' + t.name + '</label>' +
+              '<input id="jp-f-name" name="name" type="text" autocomplete="name" required>' +
+              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+            '</div>' +
+            '<div class="jp-field">' +
+              '<label for="jp-f-email">' + t.email + '</label>' +
+              '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
+              '<div class="jp-field-error">' + t.errorEmail + '</div>' +
+            '</div>' +
+            '<div class="jp-field">' +
+              '<label for="jp-f-country">' + t.country + '</label>' +
+              '<select id="jp-f-country" name="country" required>' +
+                '<option value="">' + t.countryPlaceholder + '</option>' +
+                options +
+              '</select>' +
+              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+            '</div>' +
+            '<div class="jp-row-2">' +
+              '<div class="jp-field">' +
+                '<label for="jp-f-phone">' + t.phone + '</label>' +
+                '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 ..." required>' +
+                '<div class="jp-field-error">' + t.errorRequired + '</div>' +
               '</div>' +
-              // ---- RIGHT COLUMN: photos ----
-              '<div class="jp-col-right">' +
-                '<div class="jp-field jp-field-images">' +
-                  '<div class="jp-images-header">' +
-                    '<label>' + t.images + '</label>' +
-                    '<span class="jp-images-meta" id="jp-images-meta">' + t.imagesMeta.replace('{n}', '0') + '</span>' +
-                  '</div>' +
-                  '<p class="jp-images-hint">' + t.imagesHint + '</p>' +
-                  '<div class="jp-image-grid" id="jp-image-grid">' + slotsHtml + '</div>' +
-                  '<input type="file" id="jp-image-input" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
-                  '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
-                '</div>' +
+              '<div class="jp-field">' +
+                '<label for="jp-f-age">' + t.age + '</label>' +
+                '<input id="jp-f-age" name="age" type="number" min="18" max="99" required>' +
+                '<div class="jp-field-error">' + t.errorAge + '</div>' +
               '</div>' +
+            '</div>' +
+            '<div class="jp-row-2">' +
+              '<div class="jp-field">' +
+                '<label for="jp-f-instagram">' + t.instagram + '</label>' +
+                '<div class="jp-prefix-input" data-prefix="@">' +
+                  '<input id="jp-f-instagram" name="instagram" type="text" pattern="[A-Za-z0-9._]{1,30}" maxlength="30" required>' +
+                '</div>' +
+                '<div class="jp-field-error" data-error-key="instagram">' + t.errorInstagram + '</div>' +
+              '</div>' +
+              '<div class="jp-field">' +
+                '<label for="jp-f-telegram">' + t.telegram + '</label>' +
+                '<div class="jp-prefix-input" data-prefix="@">' +
+                  '<input id="jp-f-telegram" name="telegram" type="text" pattern="[A-Za-z][A-Za-z0-9_]{4,31}" minlength="5" maxlength="32" required>' +
+                '</div>' +
+                '<div class="jp-field-error" data-error-key="telegram">' + t.errorTelegram + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="jp-field jp-field-images">' +
+              '<div class="jp-images-header">' +
+                '<label>' + t.images + '</label>' +
+                '<span class="jp-images-meta" id="jp-images-meta">' + t.imagesMeta.replace('{n}', '0') + '</span>' +
+              '</div>' +
+              '<p class="jp-images-hint">' + t.imagesHint + '</p>' +
+              '<div class="jp-image-grid" id="jp-image-grid">' + slotsHtml + '</div>' +
+              '<input type="file" id="jp-image-input" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
+              '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
             '</div>' +
             '<div class="jp-bottom">' +
               '<div class="jp-form-error" id="jp-form-error"></div>' +
@@ -437,11 +433,28 @@
     var sc = $('#jp-apply-success-close');
     if (sc) sc.addEventListener('click', closeModal);
 
-    // clear field errors as user types
+    // Clear field errors + live-filter handles for IG/TG so the user can
+    // never get an invalid character into the field at all.
     $('#jp-apply-form').addEventListener('input', function (e) {
-      var field = e.target.closest('.jp-field');
+      var el = e.target;
+      var field = el.closest('.jp-field');
       if (field) field.classList.remove('is-invalid');
-      e.target.classList.remove('is-invalid');
+      el.classList.remove('is-invalid');
+
+      if (el.name === 'instagram') {
+        var v = el.value.replace(/^@+/, '');
+        var cleaned = v.replace(/[^A-Za-z0-9._]/g, '');
+        if (cleaned !== el.value) el.value = cleaned;
+      }
+      if (el.name === 'telegram') {
+        var tv = el.value.replace(/^@+/, '');
+        // Telegram allows letters/digits/underscore. First char must be letter,
+        // but during typing we don't want to delete what the user is typing if
+        // they haven't reached the second char yet - so only strip non-allowed
+        // chars, leave start-with-letter rule for submit-time validation.
+        var tcleaned = tv.replace(/[^A-Za-z0-9_]/g, '');
+        if (tcleaned !== el.value) el.value = tcleaned;
+      }
     });
 
     bindImageHandlers();
@@ -501,6 +514,23 @@
         if (field) field.classList.add('is-invalid');
         el.classList.add('is-invalid');
         valid = false;
+      }
+      if (el.name === 'instagram' && v) {
+        // Strip leading @ if user typed one, then validate.
+        var igClean = v.replace(/^@/, '');
+        if (!/^[A-Za-z0-9._]{1,30}$/.test(igClean)) {
+          if (field) field.classList.add('is-invalid');
+          el.classList.add('is-invalid');
+          valid = false;
+        }
+      }
+      if (el.name === 'telegram' && v) {
+        var tgClean = v.replace(/^@/, '');
+        if (!/^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(tgClean)) {
+          if (field) field.classList.add('is-invalid');
+          el.classList.add('is-invalid');
+          valid = false;
+        }
       }
     });
     // Image validation (min 5 required)

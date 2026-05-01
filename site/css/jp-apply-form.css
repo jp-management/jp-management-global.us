@@ -216,6 +216,66 @@
   margin-top: 10px;
 }
 
+/* Consent checkbox */
+#jp-apply-form .jp-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  cursor: pointer;
+  margin: 0 0 10px;
+  user-select: none;
+}
+#jp-apply-form .jp-consent input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+#jp-apply-form .jp-consent .jp-consent-box {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #d0d0e0;
+  border-radius: 5px;
+  background: #fafafe;
+  margin-top: 1px;
+  position: relative;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+#jp-apply-form .jp-consent input:checked + .jp-consent-box {
+  background: linear-gradient(135deg, var(--jp-pink), var(--jp-blue));
+  border-color: transparent;
+}
+#jp-apply-form .jp-consent input:checked + .jp-consent-box::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+#jp-apply-form .jp-consent input:focus-visible + .jp-consent-box {
+  border-color: var(--jp-purple);
+  box-shadow: 0 0 0 3px rgba(214, 184, 255, 0.25);
+}
+#jp-apply-form .jp-consent .jp-consent-text {
+  flex: 1;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--jp-muted);
+}
+#jp-apply-form .jp-consent.is-invalid .jp-consent-box {
+  border-color: var(--jp-error);
+  background: #fff5f8;
+}
+#jp-apply-form .jp-consent.is-invalid .jp-consent-text {
+  color: var(--jp-error);
+}
+
 #jp-apply-modal .jp-apply-footer {
   text-align: center;
   font-size: 10px;

@@ -63,7 +63,9 @@
       errorImageType: 'Only JPG, PNG, or WEBP',
       errorImageSize: 'Each photo must be under 5 MB',
       errorTotalSize: 'Total upload size must be under 35 MB',
-      footer: 'By submitting you agree to our <a href="/Privacy-Policy">Privacy Policy</a>. We never share your data.'
+      consent: 'By submitting your information, you give your consent for JP Management to contact you to verify your details. If your application is approved, your information may be shared with our network of partners to find you a manager and a team to work with.',
+      errorConsent: 'Please confirm to continue',
+      footer: '<a href="/Privacy-Policy">Privacy Policy</a>'
     },
     es: {
       badge: 'Aplicación',
@@ -96,7 +98,9 @@
       errorImageType: 'Solo JPG, PNG o WEBP',
       errorImageSize: 'Cada foto debe ser menor a 5 MB',
       errorTotalSize: 'El tamano total debe ser menor a 35 MB',
-      footer: 'Al enviar aceptas nuestra <a href="/es/Privacy-Policy">Politica de Privacidad</a>. Nunca compartimos tus datos.'
+      consent: 'Al enviar tus datos, das tu consentimiento para que JP Management se ponga en contacto contigo para verificar tu informacion. Si tu solicitud es aprobada, tu informacion puede ser compartida con nuestra red de partners para encontrarte un manager y un equipo de trabajo.',
+      errorConsent: 'Por favor confirma para continuar',
+      footer: '<a href="/es/Privacy-Policy">Politica de Privacidad</a>'
     }
   };
 
@@ -190,18 +194,18 @@
               '<input id="jp-f-name" name="name" type="text" autocomplete="name" required>' +
               '<div class="jp-field-error">' + t.errorRequired + '</div>' +
             '</div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-email">' + t.email + '</label>' +
-              '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
-              '<div class="jp-field-error">' + t.errorEmail + '</div>' +
-            '</div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-country">' + t.country + '</label>' +
-              '<select id="jp-f-country" name="country" required>' +
-                '<option value="">' + t.countryPlaceholder + '</option>' +
-                options +
-              '</select>' +
-              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+            '<div class="jp-row-2">' +
+              '<div class="jp-field">' +
+                '<label for="jp-f-email">' + t.email + '</label>' +
+                '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
+                '<div class="jp-field-error">' + t.errorEmail + '</div>' +
+              '</div>' +
+              '<div class="jp-field">' +
+                '<label for="jp-f-country">' + t.country + '</label>' +
+                '<input id="jp-f-country" name="country" type="text" list="jp-country-list" autocomplete="country-name" placeholder="' + t.countryPlaceholder + '" required>' +
+                '<datalist id="jp-country-list">' + options + '</datalist>' +
+                '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+              '</div>' +
             '</div>' +
             '<div class="jp-row-2">' +
               '<div class="jp-field">' +
@@ -242,6 +246,11 @@
               '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
             '</div>' +
             '<div class="jp-bottom">' +
+              '<label class="jp-consent" for="jp-f-consent">' +
+                '<input type="checkbox" id="jp-f-consent" name="consent" required>' +
+                '<span class="jp-consent-box" aria-hidden="true"></span>' +
+                '<span class="jp-consent-text">' + t.consent + '</span>' +
+              '</label>' +
               '<div class="jp-form-error" id="jp-form-error"></div>' +
               '<button type="submit" id="jp-apply-submit">' + t.submit + '</button>' +
               '<p class="jp-apply-footer">' + t.footer + '</p>' +
@@ -447,6 +456,8 @@
       var field = el.closest('.jp-field');
       if (field) field.classList.remove('is-invalid');
       el.classList.remove('is-invalid');
+      var consentLabel = el.closest('.jp-consent');
+      if (consentLabel) consentLabel.classList.remove('is-invalid');
 
       if (el.name === 'instagram') {
         var v = el.value.replace(/^@+/, '');
@@ -545,6 +556,15 @@
       var imgField = $('#jp-image-grid')?.closest('.jp-field-images');
       if (imgField) imgField.classList.add('is-invalid');
       showFormError(t.errorImages);
+      valid = false;
+    }
+
+    // Consent checkbox required
+    var consentBox = $('#jp-f-consent');
+    if (consentBox && !consentBox.checked) {
+      var consentLabel = consentBox.closest('.jp-consent');
+      if (consentLabel) consentLabel.classList.add('is-invalid');
+      showFormError(t.errorConsent);
       valid = false;
     }
 

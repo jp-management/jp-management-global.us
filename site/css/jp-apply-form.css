@@ -237,13 +237,14 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
-#jp-apply-form .jp-images-header label { margin: 0; }
+#jp-apply-form .jp-images-header label { margin: 0; font-size: 12px; }
 #jp-apply-form .jp-images-meta {
   font-size: 11px;
   color: var(--jp-muted);
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 #jp-apply-form .jp-images-meta.is-met { color: var(--jp-success); }
 #jp-apply-form .jp-images-hint {
@@ -252,54 +253,54 @@
   margin: 0 0 8px;
   line-height: 1.35;
 }
-/* 5 slots in row 1 (required), 4 slots in row 2 (optional). Last cell of
-   row 2 is blank - achieved by keeping a 5-column grid and rendering 9
-   slots; the missing 10th cell is just an empty grid track. */
+/* Single row of 5 prominent slots. The 4 optional slots fade in only once
+   the user has filled all 5 required ones - keeps the field calm at first
+   glance and rewards completion with extra capacity. */
 #jp-apply-form .jp-image-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
+  gap: 6px;
 }
 #jp-apply-form .jp-image-slot {
   position: relative;
   aspect-ratio: 1 / 1;
   background: #fafafe;
-  border: 1.5px dashed #d8d8e8;
-  border-radius: 9px;
+  border: 1.5px dashed #e2e2ee;
+  border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: var(--jp-muted);
+  color: #c4c4d2;
   font-weight: 300;
   overflow: hidden;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease, opacity 0.25s ease;
 }
 @media (min-width: 720px) {
-  #jp-apply-form .jp-image-grid { gap: 7px; }
+  #jp-apply-form .jp-image-grid { gap: 8px; }
 }
 #jp-apply-form .jp-image-slot:hover {
   border-color: var(--jp-purple);
   background: #fff;
+  color: var(--jp-purple);
 }
-#jp-apply-form .jp-image-slot.is-required::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 6px;
-  height: 6px;
-  background: var(--jp-pink);
-  border-radius: 50%;
-  z-index: 1;
+#jp-apply-form .jp-image-slot.is-optional {
+  display: none;
+}
+#jp-apply-form .jp-field-images.show-optional .jp-image-slot.is-optional {
+  display: flex;
+  animation: jp-slot-in 0.25s ease both;
+}
+@keyframes jp-slot-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
 }
 #jp-apply-form .jp-image-slot.has-file {
   border-style: solid;
   border-color: var(--jp-purple);
   cursor: default;
 }
-#jp-apply-form .jp-image-slot.has-file::after { display: none; }
 #jp-apply-form .jp-image-slot img {
   position: absolute;
   inset: 0;

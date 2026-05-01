@@ -169,8 +169,10 @@
 
     var slotsHtml = '';
     for (var i = 0; i < MAX_IMAGES; i++) {
-      var req = i < MIN_IMAGES ? ' is-required' : '';
-      slotsHtml += '<div class="jp-image-slot' + req + '" data-slot="' + i + '">+</div>';
+      // First MIN_IMAGES are always visible. The rest are "optional" and
+      // only fade in once the user fills the required quota.
+      var optional = i >= MIN_IMAGES ? ' is-optional' : '';
+      slotsHtml += '<div class="jp-image-slot' + optional + '" data-slot="' + i + '">+</div>';
     }
 
     return '' +
@@ -320,7 +322,12 @@
       meta.classList.toggle('is-met', uploadedImages.length >= MIN_IMAGES);
     }
     var fieldEl = grid.closest('.jp-field-images');
-    if (fieldEl) fieldEl.classList.remove('is-invalid');
+    if (fieldEl) {
+      fieldEl.classList.remove('is-invalid');
+      // Reveal the 4 extra optional slots once the user has completed the
+      // required 5 - keeps the form calm at first glance.
+      fieldEl.classList.toggle('show-optional', uploadedImages.length >= MIN_IMAGES);
+    }
   }
 
   function readAsDataURL(file) {

@@ -17,9 +17,10 @@
   var JP_WEBHOOK_URL = 'https://jpn8n.eu/webhook/REPLACE-ME-jp-management-global-apply';
 
   // Image upload constraints
-  var MAX_IMAGES = 5;
+  var MIN_IMAGES = 5;
+  var MAX_IMAGES = 9;
   var MAX_IMAGE_BYTES = 5 * 1024 * 1024;       // 5 MB per image
-  var MAX_TOTAL_BYTES = 25 * 1024 * 1024;      // 25 MB combined
+  var MAX_TOTAL_BYTES = 35 * 1024 * 1024;      // 35 MB combined (9 photos)
 
   // Where to send the user after a successful submit (per language)
   var THANK_YOU_URLS = {
@@ -53,13 +54,13 @@
       errorRequired: 'Required',
       errorEmail: 'Enter a valid email',
       errorAge: 'Must be 18 or older',
-      images: 'Photos (5)',
-      imagesHint: 'Add up to 5 photos: portrait + full body. JPG/PNG/WEBP, 5 MB max each.',
-      imagesMeta: '{n}/' + MAX_IMAGES + ' photos',
-      errorImages: 'Add at least 1 photo',
+      images: 'Photos',
+      imagesHint: 'Min ' + MIN_IMAGES + ', up to ' + MAX_IMAGES + ' photos. Portrait + full body. JPG/PNG/WEBP, 5 MB each.',
+      imagesMeta: '{n}/' + MAX_IMAGES + ' (min ' + MIN_IMAGES + ')',
+      errorImages: 'Add at least ' + MIN_IMAGES + ' photos',
       errorImageType: 'Only JPG, PNG, or WEBP',
       errorImageSize: 'Each photo must be under 5 MB',
-      errorTotalSize: 'Total upload size must be under 25 MB',
+      errorTotalSize: 'Total upload size must be under 35 MB',
       footer: 'By submitting you agree to our <a href="/Privacy-Policy">Privacy Policy</a>. We never share your data.'
     },
     es: {
@@ -84,13 +85,13 @@
       errorRequired: 'Obligatorio',
       errorEmail: 'Introduce un email valido',
       errorAge: 'Debes tener 18 o mas',
-      images: 'Fotos (5)',
-      imagesHint: 'Anade hasta 5 fotos: retrato + cuerpo entero. JPG/PNG/WEBP, max 5 MB cada una.',
-      imagesMeta: '{n}/' + MAX_IMAGES + ' fotos',
-      errorImages: 'Anade al menos 1 foto',
+      images: 'Fotos',
+      imagesHint: 'Min ' + MIN_IMAGES + ', max ' + MAX_IMAGES + ' fotos. Retrato + cuerpo entero. JPG/PNG/WEBP, 5 MB cada una.',
+      imagesMeta: '{n}/' + MAX_IMAGES + ' (min ' + MIN_IMAGES + ')',
+      errorImages: 'Anade al menos ' + MIN_IMAGES + ' fotos',
       errorImageType: 'Solo JPG, PNG o WEBP',
       errorImageSize: 'Cada foto debe ser menor a 5 MB',
-      errorTotalSize: 'El tamano total debe ser menor a 25 MB',
+      errorTotalSize: 'El tamano total debe ser menor a 35 MB',
       footer: 'Al enviar aceptas nuestra <a href="/es/Privacy-Policy">Politica de Privacidad</a>. Nunca compartimos tus datos.'
     }
   };
@@ -162,6 +163,12 @@
       return '<option value="' + c + '">' + c + '</option>';
     }).join('');
 
+    var slotsHtml = '';
+    for (var i = 0; i < MAX_IMAGES; i++) {
+      var req = i < MIN_IMAGES ? ' is-required' : '';
+      slotsHtml += '<div class="jp-image-slot' + req + '" data-slot="' + i + '">+</div>';
+    }
+
     return '' +
       '<div id="jp-apply-overlay" role="dialog" aria-modal="true" aria-labelledby="jp-apply-title">' +
         '<div id="jp-apply-modal">' +
@@ -172,69 +179,75 @@
             '<p class="jp-apply-sub">' + t.sub + '</p>' +
           '</div>' +
           '<form id="jp-apply-form" novalidate>' +
-            '<div class="jp-form-error" id="jp-form-error"></div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-name">' + t.name + '</label>' +
-              '<input id="jp-f-name" name="name" type="text" autocomplete="name" required>' +
-              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-            '</div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-email">' + t.email + '</label>' +
-              '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
-              '<div class="jp-field-error">' + t.errorEmail + '</div>' +
-            '</div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-country">' + t.country + '</label>' +
-              '<select id="jp-f-country" name="country" required>' +
-                '<option value="">' + t.countryPlaceholder + '</option>' +
-                options +
-              '</select>' +
-              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-            '</div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-phone">' + t.phone + '</label>' +
-              '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 ..." required>' +
-              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-            '</div>' +
-            '<div class="jp-row">' +
-              '<div class="jp-field">' +
-                '<label for="jp-f-instagram">' + t.instagram + '</label>' +
-                '<div class="jp-prefix-input" data-prefix="@">' +
-                  '<input id="jp-f-instagram" name="instagram" type="text" required>' +
+            '<div class="jp-grid">' +
+              // ---- LEFT COLUMN: contact fields ----
+              '<div class="jp-col-left">' +
+                '<div class="jp-field">' +
+                  '<label for="jp-f-name">' + t.name + '</label>' +
+                  '<input id="jp-f-name" name="name" type="text" autocomplete="name" required>' +
+                  '<div class="jp-field-error">' + t.errorRequired + '</div>' +
                 '</div>' +
-                '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-              '</div>' +
-              '<div class="jp-field">' +
-                '<label for="jp-f-telegram">' + t.telegram + '</label>' +
-                '<div class="jp-prefix-input" data-prefix="@">' +
-                  '<input id="jp-f-telegram" name="telegram" type="text" required>' +
+                '<div class="jp-field">' +
+                  '<label for="jp-f-email">' + t.email + '</label>' +
+                  '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
+                  '<div class="jp-field-error">' + t.errorEmail + '</div>' +
                 '</div>' +
-                '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+                '<div class="jp-field">' +
+                  '<label for="jp-f-country">' + t.country + '</label>' +
+                  '<select id="jp-f-country" name="country" required>' +
+                    '<option value="">' + t.countryPlaceholder + '</option>' +
+                    options +
+                  '</select>' +
+                  '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+                '</div>' +
+                '<div class="jp-row-2">' +
+                  '<div class="jp-field">' +
+                    '<label for="jp-f-phone">' + t.phone + '</label>' +
+                    '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 ..." required>' +
+                    '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+                  '</div>' +
+                  '<div class="jp-field">' +
+                    '<label for="jp-f-age">' + t.age + '</label>' +
+                    '<input id="jp-f-age" name="age" type="number" min="18" max="99" required>' +
+                    '<div class="jp-field-error">' + t.errorAge + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="jp-row-2">' +
+                  '<div class="jp-field">' +
+                    '<label for="jp-f-instagram">' + t.instagram + '</label>' +
+                    '<div class="jp-prefix-input" data-prefix="@">' +
+                      '<input id="jp-f-instagram" name="instagram" type="text" required>' +
+                    '</div>' +
+                    '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+                  '</div>' +
+                  '<div class="jp-field">' +
+                    '<label for="jp-f-telegram">' + t.telegram + '</label>' +
+                    '<div class="jp-prefix-input" data-prefix="@">' +
+                      '<input id="jp-f-telegram" name="telegram" type="text" required>' +
+                    '</div>' +
+                    '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+              // ---- RIGHT COLUMN: photos ----
+              '<div class="jp-col-right">' +
+                '<div class="jp-field jp-field-images">' +
+                  '<div class="jp-images-header">' +
+                    '<label>' + t.images + '</label>' +
+                    '<span class="jp-images-meta" id="jp-images-meta">' + t.imagesMeta.replace('{n}', '0') + '</span>' +
+                  '</div>' +
+                  '<p class="jp-images-hint">' + t.imagesHint + '</p>' +
+                  '<div class="jp-image-grid" id="jp-image-grid">' + slotsHtml + '</div>' +
+                  '<input type="file" id="jp-image-input" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
+                  '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
+                '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="jp-field">' +
-              '<label for="jp-f-age">' + t.age + '</label>' +
-              '<input id="jp-f-age" name="age" type="number" min="18" max="99" required>' +
-              '<div class="jp-field-error">' + t.errorAge + '</div>' +
+            '<div class="jp-bottom">' +
+              '<div class="jp-form-error" id="jp-form-error"></div>' +
+              '<button type="submit" id="jp-apply-submit">' + t.submit + '</button>' +
+              '<p class="jp-apply-footer">' + t.footer + '</p>' +
             '</div>' +
-            '<div class="jp-field jp-field-images">' +
-              '<label>' + t.images + '</label>' +
-              '<p class="jp-images-hint">' + t.imagesHint + '</p>' +
-              '<div class="jp-image-grid" id="jp-image-grid">' +
-                (function () {
-                  var slots = '';
-                  for (var i = 0; i < MAX_IMAGES; i++) {
-                    slots += '<div class="jp-image-slot" data-slot="' + i + '">+</div>';
-                  }
-                  return slots;
-                })() +
-              '</div>' +
-              '<input type="file" id="jp-image-input" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
-              '<div class="jp-images-meta" id="jp-images-meta">' + t.imagesMeta.replace('{n}', '0') + '</div>' +
-              '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
-            '</div>' +
-            '<button type="submit" id="jp-apply-submit">' + t.submit + '</button>' +
-            '<p class="jp-apply-footer">' + t.footer + '</p>' +
           '</form>' +
           '<div class="jp-apply-success">' +
             '<div class="jp-check">&#10003;</div>' +
@@ -306,7 +319,10 @@
       }
     });
     var meta = $('#jp-images-meta');
-    if (meta) meta.textContent = t.imagesMeta.replace('{n}', String(uploadedImages.length));
+    if (meta) {
+      meta.textContent = t.imagesMeta.replace('{n}', String(uploadedImages.length));
+      meta.classList.toggle('is-met', uploadedImages.length >= MIN_IMAGES);
+    }
     var fieldEl = grid.closest('.jp-field-images');
     if (fieldEl) fieldEl.classList.remove('is-invalid');
   }
@@ -487,8 +503,8 @@
         valid = false;
       }
     });
-    // Image validation (at least 1)
-    if (uploadedImages.length < 1) {
+    // Image validation (min 5 required)
+    if (uploadedImages.length < MIN_IMAGES) {
       var imgField = $('#jp-image-grid')?.closest('.jp-field-images');
       if (imgField) imgField.classList.add('is-invalid');
       showFormError(t.errorImages);

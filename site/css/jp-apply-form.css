@@ -1,0 +1,265 @@
+/* JP Apply Form - on-domain Tally replacement
+   Brand: pink/blue gradient, soft shadows, rounded.
+   Bilingual EN/ES; auto-language from <html lang>.
+   Drop-in: just <link> this and the JS file in any page. */
+
+:root {
+  --jp-pink: #ffb1d4;
+  --jp-blue: #b1d4ff;
+  --jp-purple: #d6b8ff;
+  --jp-dark: #1a1a2e;
+  --jp-text: #2d2d44;
+  --jp-muted: #6b6b85;
+  --jp-error: #d63864;
+  --jp-success: #4caf50;
+  --jp-shadow: 0 8px 32px rgba(214, 184, 255, 0.25);
+  --jp-shadow-lg: 0 20px 60px rgba(26, 26, 46, 0.35);
+}
+
+#jp-apply-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 12px;
+  overflow-y: auto;
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+#jp-apply-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+#jp-apply-modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: var(--jp-shadow-lg);
+  padding: 36px 28px 32px;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--jp-text);
+  transform: translateY(20px) scale(0.97);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+}
+#jp-apply-overlay.is-open #jp-apply-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+#jp-apply-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: 0;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--jp-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+#jp-apply-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--jp-text);
+}
+
+#jp-apply-modal .jp-apply-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+#jp-apply-modal .jp-apply-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--jp-pink), var(--jp-blue));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+#jp-apply-modal h2 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  color: var(--jp-dark);
+}
+#jp-apply-modal .jp-apply-sub {
+  font-size: 15px;
+  color: var(--jp-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+#jp-apply-form .jp-field {
+  margin-bottom: 14px;
+}
+#jp-apply-form label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--jp-text);
+  margin-bottom: 6px;
+}
+#jp-apply-form input,
+#jp-apply-form select {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #e8e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--jp-text);
+  background: #fafafe;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+#jp-apply-form input:focus,
+#jp-apply-form select:focus {
+  outline: none;
+  border-color: var(--jp-purple);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(214, 184, 255, 0.25);
+}
+#jp-apply-form input.is-invalid,
+#jp-apply-form select.is-invalid {
+  border-color: var(--jp-error);
+  background: #fff5f8;
+}
+#jp-apply-form .jp-field-error {
+  display: none;
+  font-size: 12px;
+  color: var(--jp-error);
+  margin-top: 4px;
+}
+#jp-apply-form .jp-field.is-invalid .jp-field-error {
+  display: block;
+}
+
+#jp-apply-form .jp-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 420px) {
+  #jp-apply-form .jp-row { grid-template-columns: 1fr; gap: 0; }
+}
+
+#jp-apply-form .jp-prefix-input {
+  position: relative;
+}
+#jp-apply-form .jp-prefix-input input {
+  padding-left: 32px;
+}
+#jp-apply-form .jp-prefix-input::before {
+  content: attr(data-prefix);
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--jp-muted);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+#jp-apply-submit {
+  width: 100%;
+  background: linear-gradient(90deg, var(--jp-pink), var(--jp-blue));
+  color: #fff;
+  border: 0;
+  border-radius: 14px;
+  padding: 15px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: var(--jp-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  text-transform: uppercase;
+  font-family: inherit;
+}
+#jp-apply-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 36px rgba(214, 184, 255, 0.4);
+}
+#jp-apply-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#jp-apply-form .jp-form-error {
+  display: none;
+  background: #fff5f8;
+  color: var(--jp-error);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  border: 1px solid #ffd6e3;
+}
+#jp-apply-form .jp-form-error.is-visible { display: block; }
+
+#jp-apply-modal .jp-apply-success {
+  display: none;
+  text-align: center;
+  padding: 12px 0 4px;
+}
+#jp-apply-modal.is-success #jp-apply-form { display: none; }
+#jp-apply-modal.is-success .jp-apply-success { display: block; }
+#jp-apply-modal .jp-apply-success .jp-check {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--jp-pink), var(--jp-blue));
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+}
+#jp-apply-modal .jp-apply-success h3 {
+  font-size: 22px;
+  margin: 0 0 8px;
+  color: var(--jp-dark);
+}
+#jp-apply-modal .jp-apply-success p {
+  font-size: 15px;
+  color: var(--jp-muted);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+#jp-apply-modal .jp-apply-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--jp-muted);
+  margin-top: 16px;
+  line-height: 1.5;
+}
+#jp-apply-modal .jp-apply-footer a {
+  color: var(--jp-muted);
+  text-decoration: underline;
+}
+
+body.jp-apply-locked {
+  overflow: hidden;
+}

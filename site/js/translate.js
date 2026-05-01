@@ -67,12 +67,12 @@
 
   function updateMainVideo(lang) {
     var videos = {
-      en: "https://jp-management-global.com/videos/introe.mp4",
-      es: "https://jp-management-global.com/videos/spanish-version.mp4"
+      en: "/videos/introe.mp4",
+      es: "/videos/spanish-version.mp4"
     };
     var posters = {
-      en: "https://jp-management-global.com/videos/introe-poster.jpg",
-      es: "https://jp-management-global.com/videos/spanish-version-poster.jpg"
+      en: "/videos/introe-poster.jpg",
+      es: "/videos/spanish-version-poster.jpg"
     };
     var videoEl = document.getElementById("main1");
     if (videoEl) {

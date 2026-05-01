@@ -3,14 +3,12 @@ Allow: /
 
 Sitemap: https://jp-management-global.com/sitemap.xml
 
-# Block internal/system files
+# Block internal/system files only - keep /js/, /locales/, /Casestudies/
+# open so Google can render JS-driven pages and crawl case-study details.
 Disallow: /678bc20f1b45caf51b73ea4d/
 Disallow: /npm/
 Disallow: /slater/
 Disallow: /gh/
-Disallow: /js/
-Disallow: /locales/
 Disallow: /.trash/
 Disallow: /thank-you
-Disallow: /es/thank-you
-Disallow: /Casestudies/
+Disallow: /es/gracias

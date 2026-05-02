@@ -8,15 +8,15 @@
 >
   <head>
     <style id="jp-splash-style">
-    #jp-splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffb4d4 0%,#d4c4ff 50%,#b1dcff 100%);transition:opacity .25s ease-out;will-change:opacity;margin:0;padding:0}
+    #jp-splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffb4d4 0%,#b1dcff 100%);transition:opacity .12s linear;will-change:opacity;margin:0;padding:0}
     #jp-splash.jp-splash-hide{opacity:0;pointer-events:none}
-    #jp-splash img{width:180px;max-width:42vw;height:auto;animation:jp-splash-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 28px rgba(255,255,255,.45));-webkit-user-select:none;user-select:none;pointer-events:none}
+    #jp-splash img{width:320px!important;max-width:55vw!important;height:auto;animation:jp-splash-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 28px rgba(255,255,255,.45));-webkit-user-select:none;user-select:none;pointer-events:none}
     @keyframes jp-splash-pulse{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.06);opacity:1}}
     @media (prefers-reduced-motion:reduce){#jp-splash img{animation:none}}
-    html.jp-splash-active,html.jp-splash-active body{overflow:hidden!important}
+    html.jp-splash-active,html.jp-splash-active body{overflow:hidden!important}html:not(.jp-splash-active) #jp-splash{display:none!important}
     </style>
     <link rel="preload" as="image" href="/img/jp-logo-2.webp" fetchpriority="high">
-    <script>document.documentElement.classList.add('jp-splash-active');</script>
+    <script>try{if(!sessionStorage.getItem('jp_splash_seen')){document.documentElement.classList.add('jp-splash-active');sessionStorage.setItem('jp_splash_seen','1');}}catch(e){document.documentElement.classList.add('jp-splash-active');}</script>
     <script defer src="../../js/meta-pixel.js"></script>
 <meta charset="utf-8" />
     <title>&iquest;Cuánto Ganan los Creadores de OnlyFans? | JP Management</title>
@@ -38,7 +38,7 @@
       rel="stylesheet"
       type="text/css"
     />
-    <link href="../../css/custom.css?v=63" rel="stylesheet" />
+    <link href="../../css/custom.css?v=65" rel="stylesheet" />
     <link href="../../../css/blog.css?v=17" rel="stylesheet" />
 
     <!-- Google Tag Manager -->
@@ -58,8 +58,7 @@
     </script>
     <link href="../../img/icon.png" rel="shortcut icon" type="image/x-icon" />
     <link href="../../img/icon.png" rel="apple-touch-icon" />
-    <link rel="preconnect" href="https://global-uploads.webflow.com/" /><link rel="preconnect" href="https://assets.website-files.com/" />
-    <link rel="preload" href="../../npm/hls.js" as="script" />
+    
     <script
       src="https://www.google.com/recaptcha/enterprise.js?render=6LfByx8qAAAAAAf3MqiQA38zH_u2fuHo6R1hLaBV"
       async
@@ -81,20 +80,19 @@
       _paq.push(["enableLinkTracking"]);
       (function () {
         var u = "https://winno.matomo.cloud/";
-        _paq.push(["setTrackerUrl", u + "../en/matomo.html"]);
+        _paq.push(["setTrackerUrl", u + "matomo.php"]);
         _paq.push(["setSiteId", "33"]);
         var d = document,
           g = d.createElement("script"),
           s = d.getElementsByTagName("script")[0];
         g.async = true;
-        g.src = "../winno.matomo.cloud/matomo.js";
+        g.src = "https://cdn.matomo.cloud/winno.matomo.cloud/matomo.js";
         s.parentNode.insertBefore(g, s);
       })();
     </script>
     <!-- END MATOMO CODE -->
 
     <!-- START HLS CODE -->
-    <script defer src="../../npm/hls.js"></script>
     <!-- END HLS CODE -->
     <script>
       window.detectVideoLanguage = function () {
@@ -167,8 +165,9 @@
     <meta property="og:site_name" content="JP Management" />
 
     <!-- JP Apply Form (in-page modal, replaces external Tally) -->
-    <link rel="stylesheet" href="/css/jp-apply-form.css">
-    <script defer src="/js/jp-apply-form.js"></script>
+    <link rel="preload" as="style" href="/css/jp-apply-form.css"><link rel="stylesheet" href="/css/jp-apply-form.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/css/jp-apply-form.css"></noscript>
+    <script defer src="/js/jp-apply-loader.js"></script>
+      <script defer src="/js/jp-prefetch.js"></script>
   </head>
   <body data-page="blog-article">
 <div id="jp-splash" role="status" aria-label="Loading JP Management"><img src="/img/jp-logo-2.webp" alt="JP Management" width="240" height="240" decoding="async" fetchpriority="high"></div>
@@ -776,7 +775,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
     <section class="article-hero">
       <div class="article-hero-inner">
         <span class="article-category">EARNINGS</span>
-        <h1 class="article-title">Cuanto Ganan Realmente los Creadores de OnlyFans</h1>
+        <h1 class="article-title">¿Cuánto Ganan Realmente los Creadores de OnlyFans?</h1>
         <div class="article-meta">
           <span class="article-author">JP Management</span>
           <span class="meta-sep">|</span>
@@ -908,7 +907,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
 
         <p>Las ganancias en OnlyFans no son aleatorias. Estan determinadas por un conjunto de factores que los creadores pueden influir y optimizar. Entender estas variables es el primer paso para construir una pagina con altas ganancias.</p>
 
-        <h3>Seleccion de Nicho</h3>
+        <h3>Selección de Nicho</h3>
         <p>Tu nicho determina el tamano y el poder adquisitivo de tu audiencia potencial. Algunos nichos son altamente competitivos pero tienen audiencias masivas, mientras que otros son mas pequenos pero cuentan con suscriptores dispuestos a pagar precios premium. Elegir el nicho correcto, y posicionarte claramente dentro de el, es una de las decisiones mas importantes que tomaras como creador.</p>
 
         <h3>Consistencia</h3>
@@ -931,7 +930,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
         </div>
 
         <!-- Section 5 -->
-        <h2 id="comisiones-onlyfans">Cuanto se Queda OnlyFans?</h2>
+        <h2 id="comisiones-onlyfans">Cuánto se Queda OnlyFans?</h2>
 
         <p>OnlyFans retiene el 20% de todas las ganancias de los creadores. Esta es una tarifa fija que se aplica a todos los tipos de ingresos: suscripciones, propinas, mensajes PPV y contenido personalizado. No hay tarifas escalonadas ni forma de negociar un porcentaje mas bajo, sin importar cuanto ganes.</p>
 
@@ -964,7 +963,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
         <p>Estos numeros asumen un creador que esta poniendo un esfuerzo real: publicacion diaria, marketing activo en redes sociales y engagement con suscriptores. Los creadores que se asocian con una agencia de gestion desde el inicio tienden a acelerar significativamente este cronograma, a menudo alcanzando niveles de ingresos del sexto mes para el tercer o cuarto mes.</p>
 
         <!-- Section 7 -->
-        <h2 id="agencias-impulso">Como las Agencias Impulsan las Ganancias de los Creadores</h2>
+        <h2 id="agencias-impulso">Cómo las Agencias Impulsan las Ganancias de los Creadores</h2>
 
         <p>Hay una razon por la cual los creadores con mayores ganancias en OnlyFans rara vez trabajan solos. Las agencias de gestion profesional proporcionan la infraestructura, estrategia y experiencia que los creadores individuales simplemente no pueden replicar por su cuenta.</p>
 
@@ -1016,7 +1015,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
         <h3>3. Construye y Mantiene tu Embudo de Redes Sociales</h3>
         <p>Tu pagina de OnlyFans es el motor de monetizacion, pero las redes sociales son el combustible. Dedica al menos una a dos horas por dia a crear y publicar contenido en TikTok, Instagram, Reddit y X. Cada plataforma tiene sus propias mejores practicas, asi que estudia lo que funciona en tu nicho en cada una.</p>
 
-        <h3>4. Ofrece Paquetes de Suscripcion</h3>
+        <h3>4. Ofrece Paquetes de Suscripción</h3>
         <p>Los paquetes de tres meses y seis meses con descuento retienen a los suscriptores y reducen la cancelacion. Un suscriptor que ha pagado por adelantado tres meses tiene muchas mas probabilidades de quedarse a largo plazo que uno que paga mes a mes.</p>
 
         <h3>5. Interactua Personalmente con tus Mejores Fans</h3>
@@ -1025,7 +1024,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
         <h3>6. Analiza e Itera</h3>
         <p>Rastrea que contenido obtiene mas engagement, que mensajes PPV tienen las tasas de desbloqueo mas altas y de donde vienen tus nuevos suscriptores. Usa estos datos para hacer mas de lo que funciona y dejar de hacer lo que no. La toma de decisiones basada en datos separa a los que mas ganan de los promedio.</p>
 
-        <h3>7. Considera la Gestion Profesional</h3>
+        <h3>7. Considera la Gestión Profesional</h3>
         <p>Si has estado en la plataforma por unos meses y te sientes estancado, o si quieres acelerar tu crecimiento desde el primer dia, asociarte con una agencia de gestion experimentada es una de las decisiones de mayor impacto que puedes tomar. La agencia correcta se paga a si misma muchas veces a traves del aumento de ingresos.</p>
 
         <!-- Section 10 -->
@@ -1043,7 +1042,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
 
         <!-- CTA Box End -->
         <div class="cta-box">
-          <h3 class="cta-box-title">Comienza a Ganar Mas con JP Management</h3>
+          <h3 class="cta-box-title">Comienza a Ganar Más con JP Management</h3>
           <p class="cta-box-text">Nuestros creadores gestionados ganan un promedio de $11,000+ por mes. Nos encargamos del chat, redes sociales, estrategia de contenido y crecimiento, para que puedas enfocarte en lo que mejor haces. Aplica hoy y descubre como podemos transformar tus ingresos en OnlyFans.</p>
           <a href="https://tally.so/r/npEWvV" class="cta-box-btn">Aplicar Ahora</a>
         </div>
@@ -1060,7 +1059,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
             <img loading="lazy" class="blog-card-img" src="/img/blog/start-onlyfans.jpg" alt="How to start OnlyFans" style="width:100%;height:200px;object-fit:cover;border-radius:12px;" />
             <div class="blog-card-body">
               <span class="blog-card-category">Primeros Pasos</span>
-              <h3 class="blog-card-title">Como Empezar en OnlyFans: La Guia Completa para Principiantes</h3>
+              <h3 class="blog-card-title">Cómo Empezar en OnlyFans: La Guía Completa para Principiantes</h3>
               <p class="blog-card-excerpt">Todo lo que necesitas saber sobre configurar tu cuenta de OnlyFans, construir tu marca y publicar contenido que atraiga suscriptores desde el primer dia.</p>
             </div>
           </a>
@@ -1190,9 +1189,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
       </footer>
     </div>
 
-    <script defer src="../../js/i18next.min.js"></script>
-    <script defer src="../../js/i18nextHttpBackend.min.js"></script>
-    <script defer src="../../js/translate.js?v=8"></script>
+    <script defer src="../../js/jp-i18n-loader.js"></script>
 
     <script defer src="../../js/jquery-3.5.1.min.dc5e7f18c8_site-678bc20f1b45caf51b73ea4d.js"></script>
     <script defer
@@ -1209,35 +1206,9 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
     ></script>
    
   
-    <!-- START GSAP CODE -->
-    <script defer src="../../npm/gsap-3.12.5/dist/gsap.min.js"></script>
-    <script defer src="../../npm/gsap-3.12.5/dist/ScrollTrigger.min.js"></script>
-    <script defer src="../../npm/gsap-3.12.5/dist/Flip.min.js"></script>
-    <script defer>
-      document.addEventListener("DOMContentLoaded", () => {
-        if (window.gsap) {
-          gsap.registerPlugin(ScrollTrigger);
-          gsap.registerPlugin(Flip);
-        }
-      });
-    </script>
-    <!-- END GSAP CODE -->
+    
     <script defer src="../../slater/11175.js"></script>
-    <!-- START FINSWEET ATTRIBUTES CODE -->
-    <script defer src="../../npm/-finsweet/attributes-toc-1/toc.js"></script>
-    <script
-      async
-      src="../../npm/-finsweet/attributes-cmsload-1/cmsload.js"
-    ></script>
-    <script
-      defer
-      src="../../npm/-finsweet/attributes-numbercount-1/numbercount.js"
-    ></script>
-    <script
-      defer
-      src="../../npm/-finsweet/attributes-scrolldisable-1/scrolldisable.js"
-    ></script>
-    <!-- END FINSWEET ATTRIBUTES CODE -->
+    
     <!-- START CMS SVG ICON CODE -->
     <script defer>
       document.addEventListener("DOMContentLoaded", () => {
@@ -1761,7 +1732,45 @@ document.addEventListener('click', function(e) {
     <script defer src="../../js/video-lazy.js"></script>
     <script defer src="../../js/utm-forward.js"></script>
 <script id="jp-splash-hide">
-(function(){var s=document.getElementById('jp-splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;setTimeout(function(){s.classList.add('jp-splash-hide');document.documentElement.classList.remove('jp-splash-active');s.setAttribute('aria-hidden','true');setTimeout(function(){if(s&&s.parentNode){s.parentNode.removeChild(s);}},320);},220);}if(document.readyState==='complete'){hide();}else{window.addEventListener('load',hide,{once:true});}setTimeout(hide,4500);})();
+(function(){var s=document.getElementById('jp-splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add("jp-splash-hide");document.documentElement.classList.remove("jp-splash-active");s.setAttribute("aria-hidden","true");setTimeout(function(){if(s&&s.parentNode){s.parentNode.removeChild(s);}},140);}if(document.readyState!=='loading'){requestAnimationFrame(hide);}else{document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(hide);},{once:true});}setTimeout(hide,4500);})();
 </script>
-</body>
+    <!-- GSAP + slater + Finsweet: lazy-loaded via IntersectionObserver / interaction
+         / requestIdleCallback so they don't block initial paint. -->
+    <script>
+      (function(){
+        function loadScript(src){
+          return new Promise(function(res, rej){
+            var s = document.createElement('script');
+            s.src = src; s.async = false;
+            s.onload = res; s.onerror = rej;
+            document.head.appendChild(s);
+          });
+        }
+        var loaded = false;
+        function loadAnimStack(){
+          if (loaded) return; loaded = true;
+          loadScript('/npm/gsap-3.12.5/dist/gsap.min.js')
+            .then(function(){ return loadScript('/npm/gsap-3.12.5/dist/ScrollTrigger.min.js'); })
+            .then(function(){ return loadScript('/npm/gsap-3.12.5/dist/Flip.min.js'); })
+            .then(function(){
+              if (window.gsap) {
+                gsap.registerPlugin(ScrollTrigger);
+                gsap.registerPlugin(Flip);
+              }
+              return loadScript('/slater/11175.js');
+            })
+            .catch(function(){});
+        }
+        function arm(){
+          ['scroll','pointerdown','keydown','touchstart'].forEach(function(ev){
+            window.addEventListener(ev, loadAnimStack, { once: true, passive: true });
+          });
+          (window.requestIdleCallback || function(cb){ setTimeout(cb, 1500); })(loadAnimStack);
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', arm);
+        } else { arm(); }
+      })();
+    </script>
+  </body>
 </html>

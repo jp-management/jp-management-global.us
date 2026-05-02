@@ -1,7 +1,7 @@
 let paths=window.location.pathname.split("/");paths=paths.filter((s=>!["en","pt-br","es","ru","it"].includes(s))),import("https://assets.slater.app/slater/11175/26522.js?v=734307"),import("https://assets.slater.app/slater/11175/26607.js?v=390320"),import("https://assets.slater.app/slater/11175/26386.js?v=351124"),import("https://assets.slater.app/slater/11175/26595.js?v=436337"),import("https://assets.slater.app/slater/11175/28417.js?v=10519");{const s=[""],t=paths[paths.length-1],a=paths[paths.length-2];(s.includes(t)||s.includes("detail_"+a)||s.includes(a+"/item"))&&import("https://assets.slater.app/slater/11175/26113.js?v=508259")}
 
 /* Language dropdown: hover to open with delay */
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('jp-slater-ready',function(){
 var d=document.querySelector('.w-dropdown');if(!d)return;
 var l=d.querySelector('.w-dropdown-list');if(!l)return;
 var tog=d.querySelector('.w-dropdown-toggle');
@@ -18,7 +18,7 @@ document.addEventListener('click',function(e){if(!d.contains(e.target)){clearTim
    No word-by-word effect — whole text fades in at once via the scroll-reveal observer. */
 
 /* Sticky dream text: force visible, override Webflow IX2 animations */
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('jp-slater-ready',function(){
   var stickyContainer=document.querySelector('.cr--dream.u-height-40vh .cmp--dream');
   if(!stickyContainer)return;
   /* Kill Webflow IX2 animations and force full visibility */
@@ -130,12 +130,12 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 
 /* Set all videos to 50% volume */
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('jp-slater-ready', function(){
   document.querySelectorAll('video').forEach(function(v){ v.volume = 0.5; });
 });
 
 /* Mobile: clone language globe into header-base next to burger (visible ≤991px) */
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('jp-slater-ready', function(){
   function closeGlobeDropdown(list) {
     list.style.display = 'none';
     list.style.opacity = '0';
@@ -186,3 +186,7 @@ document.addEventListener('DOMContentLoaded', function(){
   setupMobileGlobe();
   window.addEventListener('resize', setupMobileGlobe);
 });
+
+// JP perf: lazy-load fires this AFTER slater finishes parsing so the four
+// listeners above run even when slater loads after DOMContentLoaded.
+document.dispatchEvent(new Event('jp-slater-ready'));

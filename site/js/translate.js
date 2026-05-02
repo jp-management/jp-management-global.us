@@ -75,15 +75,18 @@
       es: "/videos/spanish-version-poster.jpg"
     };
     var videoEl = document.getElementById("main1");
-    if (videoEl) {
-      videoEl.setAttribute("poster", posters[lang]);
-      var source = videoEl.querySelector("source");
-      if (source) {
-        source.src = videos[lang] + "?v=" + Date.now();
-        videoEl.load();
-        videoEl.play();
-      }
-    }
+    if (!videoEl) return;
+    var source = videoEl.querySelector("source");
+    if (!source) return;
+    // Skip if the HTML source already matches the target language - prevents
+    // a second download (and no Date.now() cache-bust, so the browser can
+    // cache the video across visits). Forces reload only on actual lang change.
+    var currentBase = (source.getAttribute("src") || "").split("?")[0];
+    if (currentBase === videos[lang]) return;
+    videoEl.setAttribute("poster", posters[lang]);
+    source.setAttribute("src", videos[lang]);
+    videoEl.load();
+    videoEl.play().catch(function () {});
   }
 
 })();

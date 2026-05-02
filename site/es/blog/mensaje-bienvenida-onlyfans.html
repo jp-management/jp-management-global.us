@@ -2,15 +2,15 @@
 <html lang="es">
   <head>
     <style id="jp-splash-style">
-    #jp-splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffb4d4 0%,#d4c4ff 50%,#b1dcff 100%);transition:opacity .25s ease-out;will-change:opacity;margin:0;padding:0}
+    #jp-splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffb4d4 0%,#b1dcff 100%);transition:opacity .12s linear;will-change:opacity;margin:0;padding:0}
     #jp-splash.jp-splash-hide{opacity:0;pointer-events:none}
-    #jp-splash img{width:180px;max-width:42vw;height:auto;animation:jp-splash-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 28px rgba(255,255,255,.45));-webkit-user-select:none;user-select:none;pointer-events:none}
+    #jp-splash img{width:320px!important;max-width:55vw!important;height:auto;animation:jp-splash-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 28px rgba(255,255,255,.45));-webkit-user-select:none;user-select:none;pointer-events:none}
     @keyframes jp-splash-pulse{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.06);opacity:1}}
     @media (prefers-reduced-motion:reduce){#jp-splash img{animation:none}}
-    html.jp-splash-active,html.jp-splash-active body{overflow:hidden!important}
+    html.jp-splash-active,html.jp-splash-active body{overflow:hidden!important}html:not(.jp-splash-active) #jp-splash{display:none!important}
     </style>
     <link rel="preload" as="image" href="/img/jp-logo-2.webp" fetchpriority="high">
-    <script>document.documentElement.classList.add('jp-splash-active');</script>
+    <script>try{if(!sessionStorage.getItem('jp_splash_seen')){document.documentElement.classList.add('jp-splash-active');sessionStorage.setItem('jp_splash_seen','1');}}catch(e){document.documentElement.classList.add('jp-splash-active');}</script>
     <script defer src="../../js/meta-pixel.js"></script>
 <meta charset="utf-8" />
     <title>Mensaje de Bienvenida en OnlyFans: Plantillas que Retienen Suscriptores | JP Management</title>
@@ -28,8 +28,8 @@
     <meta property="og:type" content="article" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <link href="../678bc20f1b45caf51b73ea4d/css/style.css" rel="stylesheet" type="text/css" />
-    <link href="../css/custom.css?v=63" rel="stylesheet" />
+    <link rel="preload" as="style" href="../678bc20f1b45caf51b73ea4d/css/style.css"><link href="../678bc20f1b45caf51b73ea4d/css/style.css" rel="stylesheet" type="text/css" media="print" onload="this.media='all';this.onload=null"><noscript><link href="../678bc20f1b45caf51b73ea4d/css/style.css" rel="stylesheet" type="text/css"></noscript>
+    <link href="../css/custom.css?v=65" rel="stylesheet" />
     <link href="../css/blog.css?v=17" rel="stylesheet" />
     <script type="application/ld+json">
     {
@@ -44,8 +44,9 @@
     </script>
   
     <!-- JP Apply Form (in-page modal, replaces external Tally) -->
-    <link rel="stylesheet" href="/css/jp-apply-form.css">
-    <script defer src="/js/jp-apply-form.js"></script>
+    <link rel="preload" as="style" href="/css/jp-apply-form.css"><link rel="stylesheet" href="/css/jp-apply-form.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/css/jp-apply-form.css"></noscript>
+    <script defer src="/js/jp-apply-loader.js"></script>
+      <script defer src="/js/jp-prefetch.js"></script>
   </head>
   <body>
 <div id="jp-splash" role="status" aria-label="Loading JP Management"><img src="/img/jp-logo-2.webp" alt="JP Management" width="240" height="240" decoding="async" fetchpriority="high"></div>
@@ -109,7 +110,7 @@
         <p>Esta guia te da la estructura exacta, diez plantillas listas para usar y las estrategias de personalizacion que convierten un simple saludo en una poderosa herramienta de retencion y monetizacion.</p>
 
         <!-- Section 1 -->
-        <h2 id="por-que-importan">Por Que Importan los Mensajes de Bienvenida</h2>
+        <h2 id="por-que-importan">Por Qué Importan los Mensajes de Bienvenida</h2>
 
         <p>Las primeras 24 horas despues de que alguien se suscribe determinan si se convertira en un fan a largo plazo o cancelara antes de que termine el mes. Durante esta ventana, el suscriptor esta evaluando si su compra valio la pena. Un mensaje de bienvenida que llega a los pocos minutos de suscribirse envia una senal poderosa: este creador se preocupa por sus suscriptores y esta activamente involucrado en la plataforma.</p>
 
@@ -219,7 +220,7 @@
 
         <p><strong>Ignorar las respuestas.</strong> Enviar un mensaje de bienvenida y luego no responder cuando el suscriptor contesta es peor que no enviar ninguno. Crea una expectativa de interaccion y luego la rompe inmediatamente. Si haces una pregunta en tu mensaje de bienvenida, preparate para interactuar con las respuestas.</p>
 
-        <h2>Comienza a Retener Mas Suscriptores Hoy</h2>
+        <h2>Comienza a Retener Más Suscriptores Hoy</h2>
 
         <p>Tu mensaje de bienvenida de OnlyFans es una de las mejoras de mayor impacto y menor esfuerzo que puedes hacer en tu estrategia de retencion de suscriptores. Las plantillas y el framework de esta guia te dan todo lo que necesitas para crear una experiencia de bienvenida que haga que los nuevos suscriptores se sientan valorados, establezca expectativas claras y abra la puerta al engagement y los ingresos continuos.</p>
 
@@ -244,7 +245,7 @@
   </main>
 
   <script id="jp-splash-hide">
-(function(){var s=document.getElementById('jp-splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;setTimeout(function(){s.classList.add('jp-splash-hide');document.documentElement.classList.remove('jp-splash-active');s.setAttribute('aria-hidden','true');setTimeout(function(){if(s&&s.parentNode){s.parentNode.removeChild(s);}},320);},220);}if(document.readyState==='complete'){hide();}else{window.addEventListener('load',hide,{once:true});}setTimeout(hide,4500);})();
+(function(){var s=document.getElementById('jp-splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;s.classList.add("jp-splash-hide");document.documentElement.classList.remove("jp-splash-active");s.setAttribute("aria-hidden","true");setTimeout(function(){if(s&&s.parentNode){s.parentNode.removeChild(s);}},140);}if(document.readyState!=='loading'){requestAnimationFrame(hide);}else{document.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(hide);},{once:true});}setTimeout(hide,4500);})();
 </script>
 </body>
 </html>

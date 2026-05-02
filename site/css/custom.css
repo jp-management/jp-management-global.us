@@ -45,6 +45,16 @@
   align-items: center;
   justify-content: center;
 }
+/* The Webflow Lottie wrapper renders 0x0 because its JSON was removed; force it
+   hidden so it doesn't compete for space with the static <picture> fallback.
+   Higher-specificity selector required because Webflow's style.css ships a
+   :where()-tagged variant rule that wins against simpler overrides. */
+html body .cmp--hd-logo .lyt--hd-logo .wr_lot--hd-logo {
+  display: none !important;
+}
+html body .cmp--hd-logo .lyt--hd-logo .wr_ico--hd-logo {
+  display: flex !important;
+}
 .lyt--hd-logo .ico--logo picture,
 .lyt--hd-logo .ico--logo img {
   display: block;
@@ -368,6 +378,16 @@
   font-size: 1.35rem;
   opacity: 0.85;
   letter-spacing: 0.02em;
+}
+
+/* Hero: ensure h1 clears the 104px fixed header at all desktop widths.
+   Default .cr padding-top is 5em (80px) which overlaps the header on
+   ~1024-1300px viewports because the hero h1 is justified to flex-start. */
+.cr--home.cr {
+  padding-top: 7em;
+}
+@media screen and (min-width: 1440px) {
+  .cr--home.cr { padding-top: 5em; }
 }
 
 /* Make hero CTA button larger and more prominent */

@@ -522,13 +522,19 @@
 
     // Clear field errors + live-filter handles for IG/TG so the user can
     // never get an invalid character into the field at all.
-    $('#jp-apply-form').addEventListener('input', function (e) {
-      var el = e.target;
+    function clearErrorsFor(el) {
+      if (!el) return;
       var field = el.closest('.jp-field');
       if (field) field.classList.remove('is-invalid');
       el.classList.remove('is-invalid');
       var consentLabel = el.closest('.jp-consent');
       if (consentLabel) consentLabel.classList.remove('is-invalid');
+      // Hide the form-level error banner as soon as the user starts fixing.
+      clearFormError();
+    }
+    $('#jp-apply-form').addEventListener('input', function (e) {
+      var el = e.target;
+      clearErrorsFor(el);
 
       if (el.name === 'instagram') {
         var v = el.value.replace(/^@+/, '');
@@ -544,6 +550,11 @@
         var tcleaned = tv.replace(/[^A-Za-z0-9_]/g, '');
         if (tcleaned !== el.value) el.value = tcleaned;
       }
+    });
+    // Checkbox + datalist <input> often fire `change` instead of `input` when
+    // selecting a value - make sure the red state clears for those too.
+    $('#jp-apply-form').addEventListener('change', function (e) {
+      clearErrorsFor(e.target);
     });
 
     bindImageHandlers();

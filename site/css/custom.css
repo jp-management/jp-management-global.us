@@ -740,12 +740,16 @@ html[lang="es"] .lyt--case-content.lyt {
     margin-left: auto;
   }
 
-  /* Mobile Globe clone: desktop-identical styling */
+  /* Mobile Globe clone: desktop-identical styling.
+     order: -1 puts the globe BEFORE the logo + burger in the header flex
+     row so it sits flush with the left edge - cleaner on mobile. */
   #mobile-globe-clone {
     display: flex !important;
     position: relative;
     z-index: 900;
     flex: 0 0 auto;
+    order: -1;
+    margin-left: -0.25em;
     cursor: pointer;
     flex-flow: column;
     align-items: center;

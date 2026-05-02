@@ -6,6 +6,16 @@
   lang="en"
 >
   <head>
+    <style id="jp-splash-style">
+    #jp-splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffb4d4 0%,#d4c4ff 50%,#b1dcff 100%);transition:opacity .25s ease-out;will-change:opacity;margin:0;padding:0}
+    #jp-splash.jp-splash-hide{opacity:0;pointer-events:none}
+    #jp-splash img{width:180px;max-width:42vw;height:auto;animation:jp-splash-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 28px rgba(255,255,255,.45));-webkit-user-select:none;user-select:none;pointer-events:none}
+    @keyframes jp-splash-pulse{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.06);opacity:1}}
+    @media (prefers-reduced-motion:reduce){#jp-splash img{animation:none}}
+    html.jp-splash-active,html.jp-splash-active body{overflow:hidden!important}
+    </style>
+    <link rel="preload" as="image" href="/img/jp-logo-2.webp" fetchpriority="high">
+    <script>document.documentElement.classList.add('jp-splash-active');</script>
     <script defer src="../js/meta-pixel.js"></script>
 <meta charset="utf-8" />
     <title>OnlyFans Agency vs Solo — Which Is Better?</title>
@@ -429,6 +439,8 @@
     <script defer src="/js/jp-apply-form.js"></script>
   </head>
   <body data-page="blog-article">
+<div id="jp-splash" role="status" aria-label="Loading JP Management"><img src="/img/jp-logo-2.webp" alt="JP Management" width="240" height="240" decoding="async" fetchpriority="high"></div>
+
     <div class="pg--blog-article pg">
       <div class="cmp--gs cmp">
         <div class="lyt--gs lyt">
@@ -997,7 +1009,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
       <h2>Related Articles</h2>
       <div class="related-grid">
         <a href="/blog/how-to-start-onlyfans" class="blog-card">
-          <img class="blog-card-img" src="/img/blog/start-onlyfans.jpg" alt="How to start OnlyFans" style="width:100%;height:200px;object-fit:cover;border-radius:12px;" />
+          <img loading="lazy" class="blog-card-img" src="/img/blog/start-onlyfans.jpg" alt="How to start OnlyFans" style="width:100%;height:200px;object-fit:cover;border-radius:12px;" />
           <div class="blog-card-body">
             <span class="blog-card-category">Getting Started</span>
             <h3 class="blog-card-title">How to Start an OnlyFans: The Complete Beginner's Guide</h3>
@@ -1006,7 +1018,7 @@ height="0" width="0" class="gtm-noscript-iframe"></iframe></noscript>
           </div>
         </a>
         <a href="/blog/onlyfans-earnings" class="blog-card">
-          <img class="blog-card-img" src="/img/blog/agency-vs-solo.jpg" alt="Agency vs Solo" style="width:100%;height:200px;object-fit:cover;border-radius:12px;" />
+          <img loading="lazy" class="blog-card-img" src="/img/blog/agency-vs-solo.jpg" alt="Agency vs Solo" style="width:100%;height:200px;object-fit:cover;border-radius:12px;" />
           <div class="blog-card-body">
             <span class="blog-card-category">Earnings</span>
             <h3 class="blog-card-title">How Much Can You Earn on OnlyFans? A Realistic Breakdown</h3>
@@ -1353,5 +1365,8 @@ document.addEventListener('click', function(e) {
 <script src="../js/mobile-menu.js?v=8" defer></script>
     <script defer src="../js/video-lazy.js"></script>
     <script defer src="../js/utm-forward.js"></script>
+<script id="jp-splash-hide">
+(function(){var s=document.getElementById('jp-splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;setTimeout(function(){s.classList.add('jp-splash-hide');document.documentElement.classList.remove('jp-splash-active');s.setAttribute('aria-hidden','true');setTimeout(function(){if(s&&s.parentNode){s.parentNode.removeChild(s);}},320);},220);}if(document.readyState==='complete'){hide();}else{window.addEventListener('load',hide,{once:true});}setTimeout(hide,4500);})();
+</script>
 </body>
 </html>

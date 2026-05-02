@@ -2,6 +2,16 @@
 <!-- Last Published: Tue Jun 24 2025 08:05:11 GMT+0000 (Coordinated Universal Time) -->
 <html data-wf-domain="jp-management-global.us" data-wf-page="678bc20f1b45caf51b73ea49" data-wf-site="678bc20f1b45caf51b73ea4d" lang="es">
   <head>
+    <style id="jp-splash-style">
+    #jp-splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffb4d4 0%,#d4c4ff 50%,#b1dcff 100%);transition:opacity .25s ease-out;will-change:opacity;margin:0;padding:0}
+    #jp-splash.jp-splash-hide{opacity:0;pointer-events:none}
+    #jp-splash img{width:180px;max-width:42vw;height:auto;animation:jp-splash-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 28px rgba(255,255,255,.45));-webkit-user-select:none;user-select:none;pointer-events:none}
+    @keyframes jp-splash-pulse{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.06);opacity:1}}
+    @media (prefers-reduced-motion:reduce){#jp-splash img{animation:none}}
+    html.jp-splash-active,html.jp-splash-active body{overflow:hidden!important}
+    </style>
+    <link rel="preload" as="image" href="/img/jp-logo-2.webp" fetchpriority="high">
+    <script>document.documentElement.classList.add('jp-splash-active');</script>
     <script defer src="../js/meta-pixel.js"></script>
 <meta charset="utf-8" />
 
@@ -88,117 +98,7 @@
           }
         }
       });
-    </script>
-    <style>
-          /* Preloader modifications */
-          .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(90deg, var(--02-colors--pri), var(--02-colors--sec));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-          }
-
-          .preloader-logo {
-            width: 25vw;
-            /* Responsive width */
-            max-width: 250px;
-            height: auto;
-            animation: pulse 2s infinite;
-          }
-
-          .preloader-logo img {
-            width: 100%;
-            height: auto;
-          }
-
-          /* Animation for smooth transition */
-          @keyframes pulse {
-            0% {
-              transform: scale(1);
-              opacity: 0.8;
-            }
-
-            50% {
-              transform: scale(1.1);
-              opacity: 1;
-            }
-
-            100% {
-              transform: scale(1);
-              opacity: 0.8;
-            }
-          }
-
-          /* Responsive move-to-
-           animation (default) */
-          @keyframes moveToHeader {
-            to {
-              width: 110px;
-              height: 110px;
-              position: fixed;
-              transform: translate(-600px, -480px);
-            }
-          }
-
-          /* Smaller screen adaptation */
-          @media (max-width: 768px) {
-            .preloader-logo {
-              width: 40vw;
-              max-width: 200px;
-            }
-
-            @keyframes moveToHeader {
-              to {
-                width: 80px;
-                height: 80px;
-                transform: translate(-250px, -200px);
-              }
-            }
-          }
-
-          @media (max-width: 480px) {
-            .preloader-logo {
-              width: 50vw;
-              max-width: 150px;
-            }
-
-            @keyframes moveToHeader {
-              to {
-                width: 60px;
-                height: 60px;
-                transform: translate(-140px, -310px);
-              }
-            }
-          }
-
-          /* Content visibility logic */
-          body.content-visible> :not(.preloader) {
-            opacity: 1 !important;
-            transition: opacity 0.5s ease 0.1s;
-          }
-
-          body.preloading> :not(.preloader) {
-            opacity: 0;
-          }
-
-          body.preloading {
-            overflow: hidden;
-          }
-
-          body.loaded .preloader {
-            opacity: 0;
-            pointer-events: none;
-          }
-        </style>
-       
-          <meta property="og:image" content="https://jp-management-global.us/img/og-image.jpg" />
+    </script>          <meta property="og:image" content="https://jp-management-global.us/img/og-image.jpg" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:locale:alternate" content="en_US" />
     <script type="application/ld+json">
@@ -226,40 +126,8 @@
     <link rel="stylesheet" href="/css/jp-apply-form.css">
     <script defer src="/js/jp-apply-form.js"></script>
   </head>
-  <body class="preloading" data-page="empezar">
-    
-    <script>
-      // Wait for page to load
-      document.addEventListener("DOMContentLoaded", function() {
-        const preloader = document.querySelector(".preloader");
-        const preloaderLogo = document.querySelector(".preloader-logo");
-        const body = document.body;
-        // Start animation
-        setTimeout(() => {
-          // Add animation to move logo to header position
-          preloaderLogo.style.animation = "moveToHeader 1s forwards";
-          // NEW: Show website content when logo starts moving
-          body.classList.add("content-visible");
-          // After animation completes
-          setTimeout(() => {
-            // Hide preloader and show content
-            body.classList.add("loaded");
-            // Remove preloader from DOM after transition completes
-            setTimeout(() => {
-              preloader.style.display = "none";
-              body.classList.remove("preloading");
-            }, 500);
-          }, 450);
-        }, 1500); // Show preloader for 2 seconds before starting transition
-      });
-    </script>
-
-<div class="preloader">
-  <div class="preloader-logo">
-    <picture><source srcset="../img/abstract-logo.webp" type="image/webp"><source srcset="../img/abstract-logo.png" type="image/png"><img src="../img/abstract-logo.png" alt="JP Management Logo"></picture>
-  </div>
-</div>
-
+  <body class="" data-page="empezar">
+<div id="jp-splash" role="status" aria-label="Loading JP Management"><img src="/img/jp-logo-2.webp" alt="JP Management" width="240" height="240" decoding="async" fetchpriority="high"></div>
     <div class="pg--home pg">
       <script>
         window.addEventListener("load", function() {
@@ -2279,7 +2147,7 @@ window.addEventListener('DOMContentLoaded', () => {
                   <div class="lyt--ft-nav-base lyt">
                     <div class="wr_ico--ft-nav wr_ico">
                       <div class="ico--logo w-embed">
-                        <picture><source srcset="../img/jp-logo-2.webp" type="image/webp"><source srcset="../img/jp-logo-2.png" type="image/png"><img src="../img/jp-logo-2.png" alt="JP Management footer logo" /></picture>
+                        <picture><source srcset="../img/jp-logo-2.webp" type="image/webp"><source srcset="../img/jp-logo-2.png" type="image/png"><img loading="lazy" src="../img/jp-logo-2.png" alt="JP Management footer logo" /></picture>
                       </div>
                     </div>
                   </div>
@@ -2656,5 +2524,8 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="../js/mobile-menu.js?v=8" defer></script>
     <script defer src="../js/video-lazy.js"></script>
     <script defer src="../js/utm-forward.js"></script>
+<script id="jp-splash-hide">
+(function(){var s=document.getElementById('jp-splash');if(!s)return;var done=false;function hide(){if(done)return;done=true;setTimeout(function(){s.classList.add('jp-splash-hide');document.documentElement.classList.remove('jp-splash-active');s.setAttribute('aria-hidden','true');setTimeout(function(){if(s&&s.parentNode){s.parentNode.removeChild(s);}},320);},220);}if(document.readyState==='complete'){hide();}else{window.addEventListener('load',hide,{once:true});}setTimeout(hide,4500);})();
+</script>
 </body>
 </html>

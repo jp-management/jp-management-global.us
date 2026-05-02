@@ -1,6 +1,6 @@
 # JP Management Global · model acquisition
 
-Static marketing + application site at **jp-management-global.com**. Pulled out of Hostinger Business Web Hosting on 2026-04-30 to run on Netlify (auto-deploy from `main`).
+Static marketing + application site at **jp-management-global.us**. Pulled out of Hostinger Business Web Hosting on 2026-04-30 to run on Netlify (auto-deploy from `main`).
 
 ## Stack
 
@@ -42,7 +42,7 @@ All "Apply" / "Join" CTAs link to **Tally** (`tally.so/r/mY6Ykq`) on 16 pages. C
 
 ## Deploy
 
-`main` -> Netlify -> jp-management-global.com. No build command. Publish dir: `site/`.
+`main` -> Netlify -> jp-management-global.us. No build command. Publish dir: `site/`.
 
 ## Migration notes (2026-04-30)
 

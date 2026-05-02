@@ -30,7 +30,7 @@
   if (!utmString) return; // nothing to forward
 
   // --- Helpers ---
-  var ownHost = window.location.hostname; // jp-management-global.com
+  var ownHost = window.location.hostname; // jp-management-global.us
 
   function isInternalHref(href) {
     if (!href) return false;

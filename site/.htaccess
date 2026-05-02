@@ -48,17 +48,17 @@ Options -MultiViews
 # ============================================
 # 301 Redirects: /en/* -> /* (EN pages moved to root)
 # ============================================
-RewriteRule ^en/?$ https://jp-management-global.com/ [R=301,L]
-RewriteRule ^en/index\.html$ https://jp-management-global.com/ [R=301,L]
-RewriteRule ^en/index-new\.html$ https://jp-management-global.com/ [R=301,L]
+RewriteRule ^en/?$ https://jp-management-global.us/ [R=301,L]
+RewriteRule ^en/index\.html$ https://jp-management-global.us/ [R=301,L]
+RewriteRule ^en/index-new\.html$ https://jp-management-global.us/ [R=301,L]
 
 RewriteCond %{REQUEST_URI} ^/en/(.+)\.html$ [NC]
-RewriteRule ^en/(.+)\.html$ https://jp-management-global.com/$1 [R=301,L]
+RewriteRule ^en/(.+)\.html$ https://jp-management-global.us/$1 [R=301,L]
 
 RewriteCond %{REQUEST_URI} ^/en/(.+)$ [NC]
 RewriteCond %{DOCUMENT_ROOT}/en/$1 !-f
 RewriteCond %{DOCUMENT_ROOT}/en/$1 !-d
-RewriteRule ^en/(.+)$ https://jp-management-global.com/$1 [R=301,L]
+RewriteRule ^en/(.+)$ https://jp-management-global.us/$1 [R=301,L]
 
 # ============================================
 # URL Consistency: EN/ES parallel paths
@@ -73,7 +73,7 @@ RewriteRule ^es/contact(\.html)?$ /es/empezar.html [R=301,L]
 # Redirect /index or /index.html to root
 # ============================================
 RewriteCond %{THE_REQUEST} /index(\.html)?\s [NC]
-RewriteRule ^index(\.html)?$ https://jp-management-global.com/ [R=301,L]
+RewriteRule ^index(\.html)?$ https://jp-management-global.us/ [R=301,L]
 
 # ============================================
 # Clean URLs: Remove .html extension

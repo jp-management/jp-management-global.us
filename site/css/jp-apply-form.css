@@ -24,7 +24,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 6px;
+  padding: 16px;
   overflow-y: auto;
   z-index: 99999;
   opacity: 0;
@@ -36,12 +36,12 @@
 #jp-apply-modal {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   margin: auto;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 22px;
   box-shadow: var(--jp-shadow-lg);
-  padding: 14px 14px 16px;
+  padding: 22px 22px 24px;
   font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--jp-text);
   transform: translateY(20px) scale(0.97);
@@ -73,7 +73,7 @@
 
 #jp-apply-modal .jp-apply-header {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 #jp-apply-modal .jp-apply-badge {
   display: inline-block;
@@ -106,13 +106,13 @@
   display: block;
 }
 @media (min-width: 720px) {
-  #jp-apply-modal { max-width: 520px; padding: 26px 28px; }
+  #jp-apply-modal { max-width: 540px; padding: 32px 34px 30px; }
   #jp-apply-modal h2 { font-size: 22px; }
 }
 
-#jp-apply-form .jp-field { margin: 0 0 7px; }
+#jp-apply-form .jp-field { margin: 0 0 12px; }
 @media (min-width: 720px) {
-  #jp-apply-form .jp-field { margin: 0 0 10px; }
+  #jp-apply-form .jp-field { margin: 0 0 14px; }
 }
 #jp-apply-form label {
   display: block;
@@ -159,7 +159,7 @@
 #jp-apply-form .jp-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 #jp-apply-form .jp-prefix-input { position: relative; }
@@ -213,7 +213,7 @@
 #jp-apply-form .jp-form-error.is-visible { display: block; }
 
 #jp-apply-form .jp-bottom {
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 /* Consent checkbox */
@@ -264,8 +264,8 @@
 }
 #jp-apply-form .jp-consent .jp-consent-text {
   flex: 1;
-  font-size: 11px;
-  line-height: 1.45;
+  font-size: 10px;
+  line-height: 1.4;
   color: var(--jp-muted);
 }
 #jp-apply-form .jp-consent.is-invalid .jp-consent-box {
@@ -297,7 +297,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 #jp-apply-form .jp-images-header label { margin: 0; font-size: 12px; }
 #jp-apply-form .jp-images-meta {
@@ -310,65 +310,88 @@
 #jp-apply-form .jp-images-hint {
   font-size: 11px;
   color: var(--jp-muted);
-  margin: 0 0 8px;
-  line-height: 1.35;
+  margin: 0 0 10px;
+  line-height: 1.4;
 }
-/* Single row of 5 prominent slots. The 4 optional slots fade in only once
-   the user has filled all 5 required ones - keeps the field calm at first
-   glance and rewards completion with extra capacity. */
-#jp-apply-form .jp-image-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-}
-#jp-apply-form .jp-image-slot {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  background: #fafafe;
-  border: 1.5px dashed #e2e2ee;
-  border-radius: 10px;
-  cursor: pointer;
+/* Single dropzone - shown only in the empty state. Once photos exist, it
+   collapses (the "+ add" tile inside .jp-image-thumbs takes over). */
+#jp-apply-form .jp-dropzone {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: #c4c4d2;
-  font-weight: 300;
-  overflow: hidden;
-  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease, opacity 0.25s ease;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 16px;
+  background: #fafafe;
+  border: 1.5px dashed #d8d8e6;
+  border-radius: 12px;
+  color: var(--jp-muted);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
-@media (min-width: 720px) {
-  #jp-apply-form .jp-image-grid { gap: 8px; }
-}
-#jp-apply-form .jp-image-slot:hover {
+#jp-apply-form .jp-field-images.has-thumbs .jp-dropzone { display: none; }
+#jp-apply-form .jp-dropzone:hover:not(:disabled) {
   border-color: var(--jp-purple);
   background: #fff;
-  color: var(--jp-purple);
+  color: var(--jp-text);
 }
-#jp-apply-form .jp-image-slot.is-optional {
-  display: none;
-}
-#jp-apply-form .jp-field-images.show-optional .jp-image-slot.is-optional {
-  display: flex;
-  animation: jp-slot-in 0.25s ease both;
-}
-@keyframes jp-slot-in {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
-}
-#jp-apply-form .jp-image-slot.has-file {
-  border-style: solid;
+#jp-apply-form .jp-dropzone.is-dragging {
   border-color: var(--jp-purple);
-  cursor: default;
+  background: #f5edff;
+  color: var(--jp-text);
 }
-#jp-apply-form .jp-image-slot img {
+#jp-apply-form .jp-dropzone:disabled,
+#jp-apply-form .jp-dropzone.is-full {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+#jp-apply-form .jp-dropzone-icon {
+  color: #b8b8cc;
+  margin-bottom: 2px;
+}
+#jp-apply-form .jp-dropzone:hover:not(:disabled) .jp-dropzone-icon { color: var(--jp-purple); }
+#jp-apply-form .jp-dropzone-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--jp-text);
+  letter-spacing: 0.01em;
+}
+#jp-apply-form .jp-dropzone-hint {
+  font-size: 11px;
+  color: var(--jp-muted);
+}
+
+/* Thumbnails of actually uploaded photos - calm, wraps cleanly. */
+#jp-apply-form .jp-image-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 6px;
+  margin-top: 0;
+}
+#jp-apply-form .jp-field-images.has-thumbs .jp-image-thumbs {
+  margin-top: 0;
+}
+#jp-apply-form .jp-thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafe;
+  border: 1px solid #ececf4;
+}
+#jp-apply-form .jp-thumb img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-#jp-apply-form .jp-image-slot .jp-slot-remove {
+#jp-apply-form .jp-thumb-remove {
   position: absolute;
   top: 3px;
   right: 3px;
@@ -389,13 +412,31 @@
   z-index: 2;
   transition: background 0.15s ease;
 }
-#jp-apply-form .jp-image-slot .jp-slot-remove:hover { background: var(--jp-error); }
-#jp-apply-form .jp-image-grid.is-dragging {
-  outline: 2px dashed var(--jp-purple);
-  outline-offset: 4px;
-  border-radius: 12px;
+#jp-apply-form .jp-thumb-remove:hover { background: var(--jp-error); }
+
+/* Add-more tile shown inside the thumb grid once at least one photo exists. */
+#jp-apply-form .jp-thumb-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #b8b8cc;
+  font-weight: 300;
+  background: #fafafe;
+  border: 1.5px dashed #d8d8e6;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
-#jp-apply-form .jp-field-images.is-invalid .jp-image-slot.is-required {
+#jp-apply-form .jp-thumb-add:hover {
+  border-color: var(--jp-purple);
+  color: var(--jp-purple);
+  background: #fff;
+}
+
+#jp-apply-form .jp-field-images.is-invalid .jp-dropzone {
   border-color: #ffb6cc;
   background: #fff5f8;
 }

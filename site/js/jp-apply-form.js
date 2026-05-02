@@ -1,26 +1,23 @@
 /* JP Apply Form - on-domain Tally replacement.
    Replaces tally.so links + opens an in-page modal.
-   Submits to a placeholder webhook (Paul: replace JP_WEBHOOK_URL below).
+   Submits as multipart/form-data to the n8n webhook.
    Fires Meta Pixel `Lead` event on success. */
 
 (function () {
   'use strict';
 
   // ============================================================
-  // CONFIG - REPLACE THESE WITH PROD VALUES
+  // CONFIG
   // ============================================================
-  // Placeholder webhook. Replace with the real n8n webhook URL on jpn8n.eu
-  // once Paul wires the workflow. Format expected:
-  //   https://jpn8n.eu/webhook/<uuid>
-  // n8n's Webhook node should be configured: Method=POST, Binary Data=true,
-  // Property Name=photos (or read each photo_1..photo_5 from $binary).
-  var JP_WEBHOOK_URL = 'https://jpn8n.eu/webhook/REPLACE-ME-jp-management-global-apply';
+  // n8n webhook node: Method=POST, Binary Data=true, accepts multipart.
+  // Reads each photo_1..photo_9 via $binary; all other fields top-level.
+  var JP_WEBHOOK_URL = 'https://jpn8n.eu/webhook/14621d73-fba6-475b-84b3-c466b7016f48';
 
   // Image upload constraints
   var MIN_IMAGES = 5;
-  var MAX_IMAGES = 9;
+  var MAX_IMAGES = 15;
   var MAX_IMAGE_BYTES = 5 * 1024 * 1024;       // 5 MB per image
-  var MAX_TOTAL_BYTES = 35 * 1024 * 1024;      // 35 MB combined (9 photos)
+  var MAX_TOTAL_BYTES = 80 * 1024 * 1024;      // 80 MB combined (room for 15 photos)
 
   // Where to send the user after a successful submit (per language)
   var THANK_YOU_URLS = {
@@ -37,13 +34,19 @@
       title: 'Apply to JP Management',
       sub: 'Fill in the basics. We respond within 12 hours via WhatsApp or Telegram.',
       name: 'Full name',
+      namePh: 'e.g. Maria Sanchez',
       email: 'Email',
+      emailPh: 'e.g. maria@gmail.com',
       country: 'Country',
-      countryPlaceholder: 'Select your country',
+      countryPlaceholder: 'e.g. Germany',
       phone: 'Phone (WhatsApp)',
+      phonePh: 'e.g. +49 170 1234567',
       instagram: 'Instagram',
+      instagramPh: 'yourhandle',
       telegram: 'Telegram',
+      telegramPh: 'yourhandle',
       age: 'Age',
+      agePh: 'e.g. 24',
       submit: 'Submit Application',
       submitting: 'Submitting...',
       uploading: 'Uploading photos...',
@@ -56,13 +59,18 @@
       errorAge: 'Must be 18 or older',
       errorInstagram: 'Letters, numbers, "." and "_" only',
       errorTelegram: 'Letters, numbers and "_" only (5-32 chars)',
-      images: 'Photos',
-      imagesHint: 'Min ' + MIN_IMAGES + ', up to ' + MAX_IMAGES + ' photos. Portrait + full body. JPG/PNG/WEBP, 5 MB each.',
-      imagesMeta: '{n}/' + MAX_IMAGES + ' (min ' + MIN_IMAGES + ')',
-      errorImages: 'Add at least ' + MIN_IMAGES + ' photos',
+      images: 'Your photos',
+      imagesHint: 'Add at least 5 of your best photos so we can review your application. (No nudes)',
+      imagesMetaPre: '{n} of 5',
+      imagesMetaMet: '{n} added',
+      imagesMetaMore: '{n} added – you can add a few more',
+      dropzoneTitle: 'Click to upload or drag photos here',
+      dropzoneHint: 'JPG, PNG or WEBP – up to 5 MB each',
+      dropzoneFull: 'Maximum reached',
+      errorImages: 'Please add 5 photos to continue',
       errorImageType: 'Only JPG, PNG, or WEBP',
       errorImageSize: 'Each photo must be under 5 MB',
-      errorTotalSize: 'Total upload size must be under 35 MB',
+      errorTotalSize: 'Total upload size must be under 80 MB',
       consent: 'By submitting your information, you give your consent for JP Management to contact you to verify your details. If your application is approved, your information may be shared with our network of partners to find you a manager and a team to work with.',
       errorConsent: 'Please confirm to continue',
       footer: '<a href="/Privacy-Policy">Privacy Policy</a>'
@@ -72,13 +80,19 @@
       title: 'Aplica a JP Management',
       sub: 'Rellena lo basico. Respondemos en menos de 12 horas por WhatsApp o Telegram.',
       name: 'Nombre completo',
+      namePh: 'p.ej. Maria Sanchez',
       email: 'Email',
+      emailPh: 'p.ej. maria@gmail.com',
       country: 'Pais',
-      countryPlaceholder: 'Selecciona tu pais',
+      countryPlaceholder: 'p.ej. Espana',
       phone: 'Telefono (WhatsApp)',
+      phonePh: 'p.ej. +34 600 12 34 56',
       instagram: 'Instagram',
+      instagramPh: 'tu_usuario',
       telegram: 'Telegram',
+      telegramPh: 'tu_usuario',
       age: 'Edad',
+      agePh: 'p.ej. 24',
       submit: 'Enviar Aplicacion',
       submitting: 'Enviando...',
       uploading: 'Subiendo fotos...',
@@ -91,13 +105,18 @@
       errorAge: 'Debes tener 18 o mas',
       errorInstagram: 'Solo letras, numeros, "." y "_"',
       errorTelegram: 'Solo letras, numeros y "_" (5-32 caracteres)',
-      images: 'Fotos',
-      imagesHint: 'Min ' + MIN_IMAGES + ', max ' + MAX_IMAGES + ' fotos. Retrato + cuerpo entero. JPG/PNG/WEBP, 5 MB cada una.',
-      imagesMeta: '{n}/' + MAX_IMAGES + ' (min ' + MIN_IMAGES + ')',
-      errorImages: 'Anade al menos ' + MIN_IMAGES + ' fotos',
+      images: 'Tus fotos',
+      imagesHint: 'Anade al menos 5 de tus mejores fotos para que revisemos tu solicitud. (Sin desnudos)',
+      imagesMetaPre: '{n} de 5',
+      imagesMetaMet: '{n} anadidas',
+      imagesMetaMore: '{n} anadidas – puedes anadir alguna mas',
+      dropzoneTitle: 'Haz clic o arrastra tus fotos aqui',
+      dropzoneHint: 'JPG, PNG o WEBP – hasta 5 MB cada una',
+      dropzoneFull: 'Maximo alcanzado',
+      errorImages: 'Anade 5 fotos para continuar',
       errorImageType: 'Solo JPG, PNG o WEBP',
       errorImageSize: 'Cada foto debe ser menor a 5 MB',
-      errorTotalSize: 'El tamano total debe ser menor a 35 MB',
+      errorTotalSize: 'El tamano total debe ser menor a 80 MB',
       consent: 'Al enviar tus datos, das tu consentimiento para que JP Management se ponga en contacto contigo para verificar tu informacion. Si tu solicitud es aprobada, tu informacion puede ser compartida con nuestra red de partners para encontrarte un manager y un equipo de trabajo.',
       errorConsent: 'Por favor confirma para continuar',
       footer: '<a href="/es/Privacy-Policy">Politica de Privacidad</a>'
@@ -136,25 +155,44 @@
 
   function $(sel, root) { return (root || document).querySelector(sel); }
 
-  function getUtmParams() {
-    var p = new URLSearchParams(window.location.search);
+  // Tracking field allow-list. Anything outside this set gets dropped to keep
+  // the payload predictable for the n8n workflow + downstream sheets.
+  var TRACKING_KEYS = [
+    'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+    'fbclid', 'gclid', 'ttclid', 'msclkid', 'li_fat_id',
+    'ref', 'tg'
+  ];
+
+  function getTrackingParams() {
     var out = {};
-    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
-     'fbclid', 'gclid', 'ttclid', 'ref', 'tg'].forEach(function (k) {
+    // 1) URL params (highest priority - latest click wins)
+    var p = new URLSearchParams(window.location.search);
+    TRACKING_KEYS.forEach(function (k) {
       var v = p.get(k);
       if (v) out[k] = v;
     });
-    // Also restore from sessionStorage if available (utm-forward.js may store them)
+    // 2) Restore from sessionStorage (utm-forward.js stores URL-encoded
+    // query string at "jp_utm_params" - same format the rest of the site uses).
     try {
-      var stored = sessionStorage.getItem('jp_utm');
+      var stored = sessionStorage.getItem('jp_utm_params');
       if (stored) {
-        var s = JSON.parse(stored);
-        Object.keys(s).forEach(function (k) {
-          if (!out[k]) out[k] = s[k];
+        var s = new URLSearchParams(stored);
+        TRACKING_KEYS.forEach(function (k) {
+          if (!out[k]) {
+            var v = s.get(k);
+            if (v) out[k] = v;
+          }
         });
       }
     } catch (e) {}
     return out;
+  }
+
+  function readCookie(name) {
+    try {
+      var m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    } catch (e) { return ''; }
   }
 
   function stripHandle(v) {
@@ -171,13 +209,16 @@
       return '<option value="' + c + '">' + c + '</option>';
     }).join('');
 
-    var slotsHtml = '';
-    for (var i = 0; i < MAX_IMAGES; i++) {
-      // First MIN_IMAGES are always visible. The rest are "optional" and
-      // only fade in once the user fills the required quota.
-      var optional = i >= MIN_IMAGES ? ' is-optional' : '';
-      slotsHtml += '<div class="jp-image-slot' + optional + '" data-slot="' + i + '">+</div>';
-    }
+    var dropzoneHtml = '' +
+      '<button type="button" class="jp-dropzone" id="jp-image-dropzone">' +
+        '<svg class="jp-dropzone-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>' +
+          '<polyline points="17 8 12 3 7 8"></polyline>' +
+          '<line x1="12" y1="3" x2="12" y2="15"></line>' +
+        '</svg>' +
+        '<span class="jp-dropzone-title">' + t.dropzoneTitle + '</span>' +
+        '<span class="jp-dropzone-hint">' + t.dropzoneHint + '</span>' +
+      '</button>';
 
     return '' +
       '<div id="jp-apply-overlay" role="dialog" aria-modal="true" aria-labelledby="jp-apply-title">' +
@@ -191,13 +232,13 @@
           '<form id="jp-apply-form" novalidate>' +
             '<div class="jp-field">' +
               '<label for="jp-f-name">' + t.name + '</label>' +
-              '<input id="jp-f-name" name="name" type="text" autocomplete="name" required>' +
+              '<input id="jp-f-name" name="name" type="text" autocomplete="name" placeholder="' + t.namePh + '" required>' +
               '<div class="jp-field-error">' + t.errorRequired + '</div>' +
             '</div>' +
             '<div class="jp-row-2">' +
               '<div class="jp-field">' +
                 '<label for="jp-f-email">' + t.email + '</label>' +
-                '<input id="jp-f-email" name="email" type="email" autocomplete="email" required>' +
+                '<input id="jp-f-email" name="email" type="email" autocomplete="email" placeholder="' + t.emailPh + '" required>' +
                 '<div class="jp-field-error">' + t.errorEmail + '</div>' +
               '</div>' +
               '<div class="jp-field">' +
@@ -210,12 +251,12 @@
             '<div class="jp-row-2">' +
               '<div class="jp-field">' +
                 '<label for="jp-f-phone">' + t.phone + '</label>' +
-                '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 ..." required>' +
+                '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="' + t.phonePh + '" required>' +
                 '<div class="jp-field-error">' + t.errorRequired + '</div>' +
               '</div>' +
               '<div class="jp-field">' +
                 '<label for="jp-f-age">' + t.age + '</label>' +
-                '<input id="jp-f-age" name="age" type="number" min="18" max="99" required>' +
+                '<input id="jp-f-age" name="age" type="number" min="18" max="99" placeholder="' + t.agePh + '" required>' +
                 '<div class="jp-field-error">' + t.errorAge + '</div>' +
               '</div>' +
             '</div>' +
@@ -223,14 +264,14 @@
               '<div class="jp-field">' +
                 '<label for="jp-f-instagram">' + t.instagram + '</label>' +
                 '<div class="jp-prefix-input" data-prefix="@">' +
-                  '<input id="jp-f-instagram" name="instagram" type="text" pattern="[A-Za-z0-9._]{1,30}" maxlength="30" required>' +
+                  '<input id="jp-f-instagram" name="instagram" type="text" pattern="[A-Za-z0-9._]{1,30}" maxlength="30" placeholder="' + t.instagramPh + '" required>' +
                 '</div>' +
                 '<div class="jp-field-error" data-error-key="instagram">' + t.errorInstagram + '</div>' +
               '</div>' +
               '<div class="jp-field">' +
                 '<label for="jp-f-telegram">' + t.telegram + '</label>' +
                 '<div class="jp-prefix-input" data-prefix="@">' +
-                  '<input id="jp-f-telegram" name="telegram" type="text" pattern="[A-Za-z][A-Za-z0-9_]{4,31}" minlength="5" maxlength="32" required>' +
+                  '<input id="jp-f-telegram" name="telegram" type="text" pattern="[A-Za-z][A-Za-z0-9_]{4,31}" minlength="5" maxlength="32" placeholder="' + t.telegramPh + '" required>' +
                 '</div>' +
                 '<div class="jp-field-error" data-error-key="telegram">' + t.errorTelegram + '</div>' +
               '</div>' +
@@ -238,10 +279,11 @@
             '<div class="jp-field jp-field-images">' +
               '<div class="jp-images-header">' +
                 '<label>' + t.images + '</label>' +
-                '<span class="jp-images-meta" id="jp-images-meta">' + t.imagesMeta.replace('{n}', '0') + '</span>' +
+                '<span class="jp-images-meta" id="jp-images-meta">' + t.imagesMetaPre.replace('{n}', '0') + '</span>' +
               '</div>' +
               '<p class="jp-images-hint">' + t.imagesHint + '</p>' +
-              '<div class="jp-image-grid" id="jp-image-grid">' + slotsHtml + '</div>' +
+              dropzoneHtml +
+              '<div class="jp-image-thumbs" id="jp-image-thumbs"></div>' +
               '<input type="file" id="jp-image-input" accept="image/jpeg,image/png,image/webp" multiple hidden>' +
               '<div class="jp-field-error" id="jp-image-error">' + t.errorImages + '</div>' +
             '</div>' +
@@ -296,46 +338,75 @@
   }
 
   function renderImageGrid() {
-    var grid = $('#jp-image-grid');
-    if (!grid) return;
-    var slots = grid.querySelectorAll('.jp-image-slot');
-    Array.prototype.forEach.call(slots, function (slot, idx) {
-      slot.innerHTML = '';
-      slot.classList.remove('has-file');
-      var img = uploadedImages[idx];
-      if (img) {
-        slot.classList.add('has-file');
-        var thumb = document.createElement('img');
-        thumb.src = img.dataUrl;
-        thumb.alt = 'photo-' + (idx + 1);
-        var rm = document.createElement('button');
-        rm.type = 'button';
-        rm.className = 'jp-slot-remove';
-        rm.setAttribute('aria-label', 'Remove photo');
-        rm.textContent = '×';
-        rm.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          uploadedImages.splice(idx, 1);
-          renderImageGrid();
-        });
-        slot.appendChild(thumb);
-        slot.appendChild(rm);
-      } else {
-        slot.textContent = '+';
-      }
+    var thumbs = $('#jp-image-thumbs');
+    var dropzone = $('#jp-image-dropzone');
+    var fieldEl = thumbs && thumbs.closest('.jp-field-images');
+    if (!thumbs) return;
+
+    // Re-render thumbnails (only actually uploaded photos).
+    thumbs.innerHTML = '';
+    uploadedImages.forEach(function (img, idx) {
+      var thumb = document.createElement('div');
+      thumb.className = 'jp-thumb';
+      var picture = document.createElement('img');
+      picture.src = img.dataUrl;
+      picture.alt = 'photo-' + (idx + 1);
+      var rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'jp-thumb-remove';
+      rm.setAttribute('aria-label', 'Remove photo');
+      rm.textContent = '×';
+      rm.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadedImages.splice(idx, 1);
+        renderImageGrid();
+      });
+      thumb.appendChild(picture);
+      thumb.appendChild(rm);
+      thumbs.appendChild(thumb);
     });
+
+    // Once at least one photo is uploaded, the big dropzone collapses into a
+    // small "+ add" tile inside the thumb grid. Keeps the modal compact.
+    if (uploadedImages.length > 0 && uploadedImages.length < MAX_IMAGES) {
+      var addTile = document.createElement('button');
+      addTile.type = 'button';
+      addTile.className = 'jp-thumb jp-thumb-add';
+      addTile.setAttribute('aria-label', t.dropzoneTitle);
+      addTile.textContent = '+';
+      addTile.addEventListener('click', function (e) {
+        e.preventDefault();
+        var input = $('#jp-image-input');
+        if (input) input.click();
+      });
+      thumbs.appendChild(addTile);
+    }
+
+    // Counter copy
     var meta = $('#jp-images-meta');
     if (meta) {
-      meta.textContent = t.imagesMeta.replace('{n}', String(uploadedImages.length));
-      meta.classList.toggle('is-met', uploadedImages.length >= MIN_IMAGES);
+      var n = uploadedImages.length;
+      var tpl;
+      if (n < MIN_IMAGES) tpl = t.imagesMetaPre;
+      else if (n < MAX_IMAGES) tpl = t.imagesMetaMore;
+      else tpl = t.imagesMetaMet;
+      meta.textContent = tpl.replace('{n}', String(n));
+      meta.classList.toggle('is-met', n >= MIN_IMAGES);
     }
-    var fieldEl = grid.closest('.jp-field-images');
+
+    // Dropzone state - hide once max reached, otherwise active
+    if (dropzone) {
+      var full = uploadedImages.length >= MAX_IMAGES;
+      dropzone.classList.toggle('is-full', full);
+      dropzone.disabled = full;
+      var titleEl = dropzone.querySelector('.jp-dropzone-title');
+      if (titleEl) titleEl.textContent = full ? t.dropzoneFull : t.dropzoneTitle;
+    }
+
     if (fieldEl) {
       fieldEl.classList.remove('is-invalid');
-      // Reveal the 4 extra optional slots once the user has completed the
-      // required 5 - keeps the form calm at first glance.
-      fieldEl.classList.toggle('show-optional', uploadedImages.length >= MIN_IMAGES);
+      fieldEl.classList.toggle('has-thumbs', uploadedImages.length > 0);
     }
   }
 
@@ -388,14 +459,13 @@
   }
 
   function bindImageHandlers() {
-    var grid = $('#jp-image-grid');
+    var dropzone = $('#jp-image-dropzone');
     var input = $('#jp-image-input');
-    if (!grid || !input) return;
+    if (!dropzone || !input) return;
 
-    grid.addEventListener('click', function (e) {
-      var slot = e.target.closest('.jp-image-slot');
-      if (!slot) return;
-      if (slot.classList.contains('has-file')) return;
+    dropzone.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (dropzone.disabled) return;
       input.click();
     });
 
@@ -405,20 +475,21 @@
     });
 
     ['dragenter', 'dragover'].forEach(function (ev) {
-      grid.addEventListener(ev, function (e) {
+      dropzone.addEventListener(ev, function (e) {
         e.preventDefault();
         e.stopPropagation();
-        grid.classList.add('is-dragging');
+        if (!dropzone.disabled) dropzone.classList.add('is-dragging');
       });
     });
     ['dragleave', 'drop'].forEach(function (ev) {
-      grid.addEventListener(ev, function (e) {
+      dropzone.addEventListener(ev, function (e) {
         e.preventDefault();
         e.stopPropagation();
-        grid.classList.remove('is-dragging');
+        dropzone.classList.remove('is-dragging');
       });
     });
-    grid.addEventListener('drop', function (e) {
+    dropzone.addEventListener('drop', function (e) {
+      if (dropzone.disabled) return;
       var dt = e.dataTransfer;
       if (dt && dt.files) addFiles(dt.files);
     });
@@ -553,7 +624,7 @@
     });
     // Image validation (min 5 required)
     if (uploadedImages.length < MIN_IMAGES) {
-      var imgField = $('#jp-image-grid')?.closest('.jp-field-images');
+      var imgField = document.querySelector('.jp-field-images');
       if (imgField) imgField.classList.add('is-invalid');
       showFormError(t.errorImages);
       valid = false;
@@ -573,15 +644,37 @@
     // Normalize
     data.instagram = stripHandle(data.instagram);
     data.telegram = stripHandle(data.telegram);
+    data.consent = consentBox && consentBox.checked ? 'true' : 'false';
+
+    // Tracking + attribution - flat fields so n8n can map them 1:1 to columns
+    var tracking = getTrackingParams();
+    TRACKING_KEYS.forEach(function (k) {
+      if (!(k in tracking)) tracking[k] = '';
+    });
+
+    // Meta Pixel cookies for server-side CAPI matching
+    var fbp = readCookie('_fbp');
+    var fbc = readCookie('_fbc');
+    // If we have an fbclid in URL but no _fbc cookie yet, synthesize it
+    // (Meta's documented fallback format).
+    if (!fbc && tracking.fbclid) {
+      fbc = 'fb.1.' + Date.now() + '.' + tracking.fbclid;
+    }
 
     // Enrich
-    var enriched = Object.assign({}, data, {
+    var enriched = Object.assign({}, data, tracking, {
       lang: lang,
+      form_id: 'jp_apply_v1',
       page_url: window.location.href,
+      page_path: window.location.pathname,
       page_title: document.title,
       referrer: document.referrer || '',
       submitted_at: new Date().toISOString(),
-      utm_json: JSON.stringify(getUtmParams()),
+      user_agent: navigator.userAgent || '',
+      screen_size: (window.screen ? window.screen.width + 'x' + window.screen.height : ''),
+      timezone: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
+      fbp: fbp,
+      fbc: fbc,
       photo_count: String(uploadedImages.length)
     });
 
@@ -589,7 +682,7 @@
     var fd = new FormData();
     Object.keys(enriched).forEach(function (k) { fd.append(k, enriched[k]); });
     uploadedImages.forEach(function (img, idx) {
-      // photo_1 ... photo_5 with original filename
+      // photo_1 ... photo_9 with original filename
       fd.append('photo_' + (idx + 1), img.file, img.file.name || ('photo_' + (idx + 1) + '.jpg'));
     });
 

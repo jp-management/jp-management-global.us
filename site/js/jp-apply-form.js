@@ -237,18 +237,11 @@
               '<input id="jp-f-name" name="name" type="text" autocomplete="name" placeholder="' + t.namePh + '" required>' +
               '<div class="jp-field-error">' + t.errorRequired + '</div>' +
             '</div>' +
-            '<div class="jp-row-2">' +
-              '<div class="jp-field">' +
-                '<label for="jp-f-email">' + t.email + '</label>' +
-                '<input id="jp-f-email" name="email" type="email" autocomplete="email" placeholder="' + t.emailPh + '" required>' +
-                '<div class="jp-field-error">' + t.errorEmail + '</div>' +
-              '</div>' +
-              '<div class="jp-field">' +
-                '<label for="jp-f-country">' + t.country + '</label>' +
-                '<input id="jp-f-country" name="country" type="text" list="jp-country-list" autocomplete="country-name" placeholder="' + t.countryPlaceholder + '" required>' +
-                '<datalist id="jp-country-list">' + options + '</datalist>' +
-                '<div class="jp-field-error">' + t.errorRequired + '</div>' +
-              '</div>' +
+            '<div class="jp-field">' +
+              '<label for="jp-f-country">' + t.country + '</label>' +
+              '<input id="jp-f-country" name="country" type="text" list="jp-country-list" autocomplete="country-name" placeholder="' + t.countryPlaceholder + '" required>' +
+              '<datalist id="jp-country-list">' + options + '</datalist>' +
+              '<div class="jp-field-error">' + t.errorRequired + '</div>' +
             '</div>' +
             '<div class="jp-row-2">' +
               '<div class="jp-field">' +
@@ -767,7 +760,6 @@
     try {
       sessionStorage.setItem('jp_apply_submitted', JSON.stringify({
         name: payload.name,
-        email: payload.email,
         country: payload.country
       }));
     } catch (e) {}

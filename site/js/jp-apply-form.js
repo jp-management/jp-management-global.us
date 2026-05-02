@@ -57,6 +57,7 @@
       errorRequired: 'Required',
       errorEmail: 'Enter a valid email',
       errorAge: 'Must be 18 or older',
+      errorPhone: 'Start with + and country code',
       errorInstagram: 'Check your handle',
       errorTelegram: 'Use at least 5 characters',
       images: 'Your photos',
@@ -103,6 +104,7 @@
       errorRequired: 'Obligatorio',
       errorEmail: 'Introduce un email valido',
       errorAge: 'Debes tener 18 o mas',
+      errorPhone: 'Empieza con + y codigo de pais',
       errorInstagram: 'Revisa tu usuario',
       errorTelegram: 'Usa al menos 5 caracteres',
       images: 'Tus fotos',
@@ -251,8 +253,8 @@
             '<div class="jp-row-2">' +
               '<div class="jp-field">' +
                 '<label for="jp-f-phone">' + t.phone + '</label>' +
-                '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" placeholder="' + t.phonePh + '" required>' +
-                '<div class="jp-field-error">' + t.errorRequired + '</div>' +
+                '<input id="jp-f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="' + t.phonePh + '" required>' +
+                '<div class="jp-field-error">' + t.errorPhone + '</div>' +
               '</div>' +
               '<div class="jp-field">' +
                 '<label for="jp-f-age">' + t.age + '</label>' +
@@ -550,6 +552,13 @@
         var tcleaned = tv.replace(/[^A-Za-z0-9_]/g, '');
         if (tcleaned !== el.value) el.value = tcleaned;
       }
+      if (el.name === 'phone') {
+        // Allow only digits, spaces, dashes, parens; force a leading "+" so
+        // the country code is unambiguous for ops + WhatsApp deeplinks.
+        var pv = el.value.replace(/[^\d+\s()\-]/g, '').replace(/\++/g, '+');
+        if (pv && pv[0] !== '+') pv = '+' + pv;
+        if (pv !== el.value) el.value = pv;
+      }
     });
     // Checkbox + datalist <input> often fire `change` instead of `input` when
     // selecting a value - make sure the red state clears for those too.
@@ -614,6 +623,15 @@
         if (field) field.classList.add('is-invalid');
         el.classList.add('is-invalid');
         valid = false;
+      }
+      if (el.name === 'phone' && v) {
+        // Must start with "+" and have at least 7 digits total.
+        var digits = v.replace(/\D/g, '');
+        if (v[0] !== '+' || digits.length < 7) {
+          if (field) field.classList.add('is-invalid');
+          el.classList.add('is-invalid');
+          valid = false;
+        }
       }
       if (el.name === 'instagram' && v) {
         // Strip leading @ if user typed one, then validate.
@@ -754,14 +772,12 @@
       }));
     } catch (e) {}
 
-    // Show in-modal success state
-    var modal = $('#jp-apply-modal');
-    if (modal) modal.classList.add('is-success');
-
-    // Then bounce to thank-you after a short pause (so analytics fire)
+    // Go straight to the thank-you page - no in-modal confirmation, otherwise
+    // the user sees two consecutive "thanks" screens. Tiny pause lets fbq +
+    // dataLayer queue their beacons before navigation.
     setTimeout(function () {
       window.location.href = THANK_YOU_URLS[lang] || THANK_YOU_URLS.en;
-    }, 1800);
+    }, 200);
   }
 
   // ============================================================

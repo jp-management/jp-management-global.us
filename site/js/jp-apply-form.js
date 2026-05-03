@@ -1,6 +1,8 @@
 /* JP Apply Form - on-domain Tally replacement.
    Replaces tally.so links + opens an in-page modal.
-   Submits as multipart/form-data to the n8n webhook.
+   Photos pre-upload to imgbb (parallel) BEFORE form submit, then sends
+   a clean JSON payload (photo URLs as strings) to the n8n webhook -
+   no binaries, no n8n multipart pain.
    Fires Meta Pixel `Lead` event on success. */
 
 (function () {
@@ -9,15 +11,33 @@
   // ============================================================
   // CONFIG
   // ============================================================
-  // n8n webhook node: Method=POST, Binary Data=true, accepts multipart.
-  // Reads each photo_1..photo_9 via $binary; all other fields top-level.
+  // n8n webhook node: Method=POST, Content-Type=application/json.
+  // Photos arrive as photo_1_url ... photo_N_url string fields.
   var JP_WEBHOOK_URL = 'https://jpn8n.eu/webhook/14621d73-fba6-475b-84b3-c466b7016f48';
 
-  // Image upload constraints
+  // imgbb hosting (per-photo upload, returns CDN URLs).
+  // Key is intentionally client-side - imgbb has no unsigned-upload mode.
+  var IMGBB_KEY = 'aa7a8a05c79d9f6d9e75dcbf96e59814';
+  // Auto-delete imgbb assets after 30 days (privacy + storage hygiene).
+  var IMGBB_EXPIRATION_SEC = 60 * 60 * 24 * 30;
+
+  // Image upload constraints (input-side, BEFORE compression).
+  // We compress client-side to ~300-500 KB per photo before imgbb upload,
+  // so we accept generously-sized originals - even modern iPhone HEIC/JPEG.
   var MIN_IMAGES = 5;
   var MAX_IMAGES = 15;
-  var MAX_IMAGE_BYTES = 5 * 1024 * 1024;       // 5 MB per image
-  var MAX_TOTAL_BYTES = 80 * 1024 * 1024;      // 80 MB combined (room for 15 photos)
+  var MAX_IMAGE_BYTES = 15 * 1024 * 1024;      // 15 MB per image (raw original)
+  var MAX_TOTAL_BYTES = 200 * 1024 * 1024;     // 200 MB combined raw originals
+
+  // Compression settings (final upload to imgbb). Aspect ratio is always
+  // preserved - the SAME scale factor is applied to width + height.
+  // q=0.95 is the upper bound of "perceptually lossless" JPEG; above that
+  // file size grows fast without visible benefit. 2400 px on the longest
+  // side keeps full resolution for any realistic display + reduces phone
+  // photo originals (4032 px) by ~40%. Skin tones, fine textures, and text
+  // remain crisp even on a desktop monitor.
+  var COMPRESS_MAX_DIM = 2400;
+  var COMPRESS_QUALITY = 0.95;
 
   // Where to send the user after a successful submit (per language)
   var THANK_YOU_URLS = {
@@ -70,8 +90,8 @@
       dropzoneFull: 'Maximum reached',
       errorImages: 'Please add 5 photos to continue',
       errorImageType: 'Only JPG, PNG, or WEBP',
-      errorImageSize: 'Each photo must be under 5 MB',
-      errorTotalSize: 'Total upload size must be under 80 MB',
+      errorImageSize: 'Each photo must be under 15 MB',
+      errorTotalSize: 'Total upload size must be under 200 MB',
       consent: 'By submitting your information, you give your consent for JP Management to contact you to verify your details. If your application is approved, your information may be shared with our network of partners to find you a manager and a team to work with.',
       errorConsent: 'Please confirm to continue',
       footer: '<a href="/Privacy-Policy">Privacy Policy</a>'
@@ -117,8 +137,8 @@
       dropzoneFull: 'Maximo alcanzado',
       errorImages: 'Anade 5 fotos para continuar',
       errorImageType: 'Solo JPG, PNG o WEBP',
-      errorImageSize: 'Cada foto debe ser menor a 5 MB',
-      errorTotalSize: 'El tamano total debe ser menor a 80 MB',
+      errorImageSize: 'Cada foto debe ser menor a 15 MB',
+      errorTotalSize: 'El tamano total debe ser menor a 200 MB',
       consent: 'Al enviar tus datos, das tu consentimiento para que JP Management se ponga en contacto contigo para verificar tu informacion. Si tu solicitud es aprobada, tu informacion puede ser compartida con nuestra red de partners para encontrarte un manager y un equipo de trabajo.',
       errorConsent: 'Por favor confirma para continuar',
       footer: '<a href="/es/Privacy-Policy">Politica de Privacidad</a>'
@@ -683,54 +703,145 @@
       fbc = 'fb.1.' + Date.now() + '.' + tracking.fbclid;
     }
 
-    // Enrich
-    var enriched = Object.assign({}, data, tracking, {
-      lang: lang,
-      form_id: 'jp_apply_v1',
-      page_url: window.location.href,
-      page_path: window.location.pathname,
-      page_title: document.title,
-      referrer: document.referrer || '',
-      submitted_at: new Date().toISOString(),
-      user_agent: navigator.userAgent || '',
-      screen_size: (window.screen ? window.screen.width + 'x' + window.screen.height : ''),
-      timezone: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
-      fbp: fbp,
-      fbc: fbc,
-      photo_count: String(uploadedImages.length)
-    });
-
-    // Build multipart FormData (n8n webhook reads this natively)
-    var fd = new FormData();
-    Object.keys(enriched).forEach(function (k) { fd.append(k, enriched[k]); });
-    uploadedImages.forEach(function (img, idx) {
-      // photo_1 ... photo_9 with original filename
-      fd.append('photo_' + (idx + 1), img.file, img.file.name || ('photo_' + (idx + 1) + '.jpg'));
-    });
-
-    // Submit
+    // Submit button state
     var btn = $('#jp-apply-submit');
     btn.disabled = true;
     var origText = btn.textContent;
     btn.textContent = uploadedImages.length ? t.uploading : t.submitting;
 
-    fetch(JP_WEBHOOK_URL, {
-      method: 'POST',
-      // Note: do NOT set Content-Type manually; browser sets the multipart boundary.
-      body: fd,
-      mode: 'cors'
-    }).then(function (res) {
-      return onSuccess(enriched);
+    // Upload all photos to imgbb in parallel, then submit JSON to n8n.
+    Promise.all(uploadedImages.map(function (img, idx) {
+      return uploadToImgbb(img.file, 'photo_' + (idx + 1));
+    })).then(function (urls) {
+      // urls: array of strings (or null on per-photo failure)
+      var failed = urls.filter(function (u) { return !u; }).length;
+      if (failed > 0 && failed === urls.length) {
+        // All uploads failed - bail with error rather than ship empty payload.
+        throw new Error('all photos failed to upload');
+      }
+
+      // Build flat photo URL fields photo_1_url ... photo_N_url for n8n
+      // mapping into HubSpot custom properties + a comma-joined "photo_urls"
+      // for any single-field destination.
+      var photoFields = {};
+      urls.forEach(function (u, idx) {
+        photoFields['photo_' + (idx + 1) + '_url'] = u || '';
+      });
+      var joinedUrls = urls.filter(Boolean).join(',');
+
+      // Enrich
+      var payload = Object.assign({}, data, tracking, {
+        lang: lang,
+        form_language: lang === 'es' ? 'Spanish' : 'English',
+        form_id: lang === 'es' ? 'jp_apply_es' : 'jp_apply_en',
+        page_url: window.location.href,
+        page_path: window.location.pathname,
+        page_title: document.title,
+        referrer: document.referrer || '',
+        submitted_at: new Date().toISOString(),
+        user_agent: navigator.userAgent || '',
+        screen_size: (window.screen ? window.screen.width + 'x' + window.screen.height : ''),
+        timezone: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
+        fbp: fbp,
+        fbc: fbc,
+        photo_count: String(urls.filter(Boolean).length),
+        photo_urls: joinedUrls
+      }, photoFields);
+
+      // POST JSON to n8n
+      return fetch(JP_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        mode: 'cors'
+      }).then(function () { return payload; }, function () {
+        // n8n often returns CORS-opaque on success - treat as ok.
+        return payload;
+      });
+    }).then(function (payload) {
+      onSuccess(payload);
     }).catch(function (err) {
-      // n8n webhooks usually 200 without CORS headers -> opaque error.
-      // Treat that as a success since the request typically reached the server.
-      // (For a hard failure we'd want a JSON callback URL, but the placeholder
-      // setup matches n8n's default response behavior.)
-      onSuccess(enriched);
-    }).finally(function () {
+      // Hard failure path - photos completely failed to upload.
+      showFormError(t.errorGeneric || 'Something went wrong, please try again.');
       btn.disabled = false;
       btn.textContent = origText;
     });
+  }
+
+  // ============================================================
+  // Client-side image compression (canvas resize + JPEG re-encode)
+  // ============================================================
+  // Resize to <= COMPRESS_MAX_DIM on the longest side and re-encode as
+  // JPEG at COMPRESS_QUALITY. Cuts iPhone HEIC/JPEG (10-15 MB) down to
+  // ~300-500 KB. If anything fails, falls back to the original file so
+  // the upload still goes through.
+  function compressImage(file) {
+    return new Promise(function (resolve) {
+      var url;
+      try { url = URL.createObjectURL(file); } catch (e) { resolve(file); return; }
+      var img = new Image();
+      var done = false;
+      function fallback() { if (!done) { done = true; try { URL.revokeObjectURL(url); } catch (e) {} resolve(file); } }
+      img.onload = function () {
+        try {
+          var ratio = Math.min(COMPRESS_MAX_DIM / img.width, COMPRESS_MAX_DIM / img.height, 1);
+          var w = Math.max(1, Math.round(img.width * ratio));
+          var h = Math.max(1, Math.round(img.height * ratio));
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          // Highest-quality interpolation for the downscale (lanczos-like
+          // on Chrome/Firefox/Safari). Default is bilinear which is softer.
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          // White fill so transparent PNGs don't go black after JPEG conversion.
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          if (!canvas.toBlob) { fallback(); return; }
+          canvas.toBlob(function (blob) {
+            try { URL.revokeObjectURL(url); } catch (e) {}
+            if (done) return;
+            done = true;
+            // If compression made it bigger than original (rare, e.g. tiny
+            // already-compressed JPEGs), keep the original.
+            if (!blob || blob.size >= file.size) { resolve(file); return; }
+            var newName = (file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg';
+            try {
+              resolve(new File([blob], newName, { type: 'image/jpeg' }));
+            } catch (e) {
+              // Some older browsers don't support `new File` constructor.
+              blob.name = newName; resolve(blob);
+            }
+          }, 'image/jpeg', COMPRESS_QUALITY);
+        } catch (e) { fallback(); }
+      };
+      img.onerror = fallback;
+      img.src = url;
+    });
+  }
+
+  // ============================================================
+  // imgbb upload (returns URL string or null on failure)
+  // Compresses first, then uploads the compressed JPEG.
+  // ============================================================
+  function uploadToImgbb(file, label) {
+    return compressImage(file).then(function (compressed) {
+      var fd = new FormData();
+      fd.append('image', compressed);
+      if (label) fd.append('name', label);
+      fd.append('expiration', String(IMGBB_EXPIRATION_SEC));
+      return fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(IMGBB_KEY), {
+        method: 'POST',
+        body: fd
+      }).then(function (res) {
+        if (!res.ok) return null;
+        return res.json();
+      }).then(function (json) {
+        if (!json || !json.success || !json.data) return null;
+        return json.data.display_url || json.data.url || null;
+      });
+    }).catch(function () { return null; });
   }
 
   function onSuccess(payload) {

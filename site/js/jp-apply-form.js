@@ -709,10 +709,11 @@
     var origText = btn.textContent;
     btn.textContent = uploadedImages.length ? t.uploading : t.submitting;
 
-    // Upload all photos to imgbb in parallel, then submit JSON to n8n.
-    Promise.all(uploadedImages.map(function (img, idx) {
-      return uploadToImgbb(img.file, 'photo_' + (idx + 1));
-    })).then(function (urls) {
+    // Upload all photos to imgbb with bounded concurrency + retry-on-fail.
+    // Real-world bug: when fired with Promise.all, the Instagram in-app
+    // browser on iPhone drops 4-5 of 6 parallel uploads (memory pressure +
+    // IAB fetch throttling). Two workers + one retry per photo is reliable.
+    uploadAllPhotos(uploadedImages).then(function (urls) {
       // urls: array of strings (or null on per-photo failure)
       var failed = urls.filter(function (u) { return !u; }).length;
       if (failed > 0 && failed === urls.length) {
@@ -745,6 +746,8 @@
         fbp: fbp,
         fbc: fbc,
         photo_count: String(urls.filter(Boolean).length),
+        photo_count_attempted: String(urls.length),
+        photo_count_failed: String(urls.filter(function (u) { return !u; }).length),
         photo_urls: joinedUrls
       }, photoFields);
 
@@ -822,6 +825,40 @@
   }
 
   // ============================================================
+  // Photo upload pipeline (bounded concurrency + retry)
+  // ============================================================
+  // Two workers pull from a shared queue; each photo retries once after
+  // a 1 s backoff if the first attempt returns null. Reliable in
+  // Instagram / Facebook in-app browsers where Promise.all on 6 parallel
+  // uploads silently drops most of them.
+  function uploadAllPhotos(images) {
+    var results = new Array(images.length);
+    var idx = 0;
+    function pickNext() {
+      if (idx >= images.length) return Promise.resolve();
+      var i = idx++;
+      return uploadToImgbbRetried(images[i].file, 'photo_' + (i + 1)).then(function (url) {
+        results[i] = url;
+        return pickNext();
+      });
+    }
+    var WORKERS = 2;
+    var workers = [];
+    for (var w = 0; w < WORKERS; w++) workers.push(pickNext());
+    return Promise.all(workers).then(function () { return results; });
+  }
+
+  function uploadToImgbbRetried(file, label) {
+    return uploadToImgbb(file, label).then(function (url) {
+      if (url) return url;
+      // 1 s backoff, then one retry.
+      return new Promise(function (res) { setTimeout(res, 1000); }).then(function () {
+        return uploadToImgbb(file, label);
+      });
+    });
+  }
+
+  // ============================================================
   // imgbb upload (returns URL string or null on failure)
   // Compresses first, then uploads the compressed JPEG.
   // ============================================================
@@ -831,10 +868,16 @@
       fd.append('image', compressed);
       if (label) fd.append('name', label);
       fd.append('expiration', String(IMGBB_EXPIRATION_SEC));
+      // 20 s timeout via AbortController so a stalled connection doesn't
+      // tie up a worker forever (Instagram IAB sometimes hangs requests).
+      var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 20000) : null;
       return fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(IMGBB_KEY), {
         method: 'POST',
-        body: fd
+        body: fd,
+        signal: ctrl ? ctrl.signal : undefined
       }).then(function (res) {
+        if (timer) clearTimeout(timer);
         if (!res.ok) return null;
         return res.json();
       }).then(function (json) {

@@ -921,9 +921,34 @@
     // Go straight to the thank-you page - no in-modal confirmation, otherwise
     // the user sees two consecutive "thanks" screens. Tiny pause lets fbq +
     // dataLayer queue their beacons before navigation.
+    // Country override: if someone fills the EN form but is in a Spanish-
+    // speaking country (Meta sometimes shows EN ad-creative in LATAM), send
+    // them to the ES thank-you so the language matches their context.
+    var redirectLang = lang;
+    if (lang === 'en' && isSpanishSpeakingCountry(payload.country)) {
+      redirectLang = 'es';
+    }
     setTimeout(function () {
-      window.location.href = THANK_YOU_URLS[lang] || THANK_YOU_URLS.en;
+      window.location.href = THANK_YOU_URLS[redirectLang] || THANK_YOU_URLS.en;
     }, 200);
+  }
+
+  // Spanish-speaking countries (normalized lowercase, no accents). Covers
+  // both EN spellings (Mexico, Spain) and ES spellings (Mexico/Espana).
+  var ES_COUNTRIES = [
+    'argentina','bolivia','chile','colombia','costa rica','cuba','dominican republic',
+    'republica dominicana','ecuador','el salvador','equatorial guinea','guinea ecuatorial',
+    'guatemala','honduras','mexico','nicaragua','panama','paraguay','peru','puerto rico',
+    'spain','espana','uruguay','venezuela'
+  ];
+  function isSpanishSpeakingCountry(c) {
+    if (!c) return false;
+    var s = String(c).toLowerCase();
+    if (typeof s.normalize === 'function') {
+      // Strip combining diacritics so 'México' / 'España' / 'Perú' all match.
+      s = s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+    return ES_COUNTRIES.indexOf(s.trim()) !== -1;
   }
 
   // ============================================================

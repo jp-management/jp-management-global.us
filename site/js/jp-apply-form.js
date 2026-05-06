@@ -76,6 +76,7 @@
       agePh: 'e.g. 24',
       submit: 'Submit Application',
       submitting: 'Submitting...',
+      compressing: 'Preparing photos...',
       uploading: 'Uploading photos...',
       successTitle: "We've got your application",
       successText: "Our team will reach out within 12 hours via WhatsApp or Telegram. Check your inbox - we just sent a confirmation.",
@@ -123,6 +124,7 @@
       agePh: 'p.ej. 24',
       submit: 'Enviar Aplicacion',
       submitting: 'Enviando...',
+      compressing: 'Preparando fotos...',
       uploading: 'Subiendo fotos...',
       successTitle: 'Hemos recibido tu aplicacion',
       successText: 'Nuestro equipo se pondra en contacto en menos de 12 horas por WhatsApp o Telegram. Revisa tu bandeja - acabamos de enviar una confirmacion.',
@@ -716,11 +718,19 @@
     var origText = btn.textContent;
     btn.textContent = uploadedImages.length ? t.uploading : t.submitting;
 
-    // Upload all photos to imgbb with bounded concurrency + retry-on-fail.
-    // Real-world bug: when fired with Promise.all, the Instagram in-app
-    // browser on iPhone drops 4-5 of 6 parallel uploads (memory pressure +
-    // IAB fetch throttling). Two workers + one retry per photo is reliable.
-    uploadAllPhotos(uploadedImages).then(function (urls) {
+    function setProgress(label, done, total) {
+      btn.textContent = label + ' ' + done + '/' + total;
+    }
+
+    // Phase 1: compress photos serially (memory-safe in Instagram IAB).
+    // Phase 2: upload via 2-worker pool with retries.
+    compressAllPhotosSerial(uploadedImages, function (done, total) {
+      setProgress(t.compressing || 'Preparing photos...', done, total);
+    }).then(function (compressed) {
+      return uploadAllPhotos(compressed, function (done, total) {
+        setProgress(t.uploading, done, total);
+      });
+    }).then(function (urls) {
       // urls: array of strings (or null on per-photo failure).
       // Important: if ALL photos failed (Instagram IAB / imgbb down), we
       // still ship the lead with the contact data + a flag. The Meta-ad
@@ -797,11 +807,16 @@
   function showWhatsAppFallback(lang) {
     var cfg = WHATSAPP_FALLBACK[lang] || WHATSAPP_FALLBACK.en;
     var url = 'https://api.whatsapp.com/send/?phone=' + cfg.num + '&text=' + encodeURIComponent(cfg.text) + '&type=phone_number&app_absent=0';
+    var heading = lang === 'es'
+      ? 'No se pudo enviar tu solicitud'
+      : 'Your application could not be sent';
     var intro = lang === 'es'
-      ? 'Hubo un problema al enviar el formulario. Escribenos directamente a Laura por WhatsApp y te ayudamos a inscribirte:'
-      : 'There was a problem sending the form. Message Laura directly on WhatsApp and we\'ll help you apply:';
+      ? 'Escribenos directamente a Laura por WhatsApp y te ayudamos a inscribirte:'
+      : 'Message Laura directly on WhatsApp and we\'ll help you apply:';
     var btnLabel = lang === 'es' ? 'Escribir a Laura por WhatsApp' : 'Message Laura on WhatsApp';
-    var html = '<div style="font-size:13px;line-height:1.45;margin-bottom:8px;">' + intro + '</div>' +
+    var html =
+      '<div style="font-size:14px;font-weight:700;color:#d63864;margin-bottom:6px;">' + heading + '</div>' +
+      '<div style="font-size:13px;line-height:1.45;color:var(--jp-text);margin-bottom:10px;">' + intro + '</div>' +
       '<a href="' + url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem 1.1rem;border-radius:10px;background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);color:#fff;font-weight:700;text-decoration:none;font-size:13px;width:100%;box-sizing:border-box;">' +
         '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>' +
         btnLabel +
@@ -810,10 +825,12 @@
     if (e) {
       e.innerHTML = html;
       e.classList.add('is-visible');
-      e.style.background = '#fff';
-      e.style.border = '1px solid #ffd6e3';
+      e.style.background = '#fff5f8';
+      e.style.border = '1.5px solid #ffd6e3';
       e.style.color = 'var(--jp-text)';
       e.style.padding = '14px';
+      // Scroll banner into view so user definitely sees the failure
+      try { e.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (err) {}
     }
   }
 
@@ -871,20 +888,40 @@
   }
 
   // ============================================================
-  // Photo upload pipeline (bounded concurrency + retry)
+  // Photo upload pipeline - 2 phases to avoid Instagram IAB OOM.
+  //
+  // Phase 1: compress all photos SERIALLY (one at a time). A canvas
+  //   decoding a 4032x3024 iPhone JPEG holds ~50 MB of raw pixel data.
+  //   Two photos in flight = ~100 MB, which OOMs Instagram in-app
+  //   browsers. Serial = max 50 MB peak, no OOM.
+  //
+  // Phase 2: upload the compressed (~200 KB each) blobs via a 2-worker
+  //   pool with up to 2 retries each (1 s and 3 s exponential backoff).
+  //   Compressed payload is small enough that parallel is safe.
   // ============================================================
-  // Two workers pull from a shared queue; each photo retries once after
-  // a 1 s backoff if the first attempt returns null. Reliable in
-  // Instagram / Facebook in-app browsers where Promise.all on 6 parallel
-  // uploads silently drops most of them.
-  function uploadAllPhotos(images) {
-    var results = new Array(images.length);
+  function compressAllPhotosSerial(images, onProgress) {
+    var compressed = new Array(images.length);
+    var p = Promise.resolve();
+    images.forEach(function (img, i) {
+      p = p.then(function () {
+        if (onProgress) onProgress(i + 1, images.length);
+        return compressImage(img.file).then(function (c) { compressed[i] = c; });
+      });
+    });
+    return p.then(function () { return compressed; });
+  }
+
+  function uploadAllPhotos(compressedFiles, onProgress) {
+    var results = new Array(compressedFiles.length);
+    var doneCount = 0;
     var idx = 0;
     function pickNext() {
-      if (idx >= images.length) return Promise.resolve();
+      if (idx >= compressedFiles.length) return Promise.resolve();
       var i = idx++;
-      return uploadToImgbbRetried(images[i].file, 'photo_' + (i + 1)).then(function (url) {
+      return uploadToImgbbRetried(compressedFiles[i], 'photo_' + (i + 1)).then(function (url) {
         results[i] = url;
+        doneCount++;
+        if (onProgress) onProgress(doneCount, compressedFiles.length);
         return pickNext();
       });
     }
@@ -897,40 +934,42 @@
   function uploadToImgbbRetried(file, label) {
     return uploadToImgbb(file, label).then(function (url) {
       if (url) return url;
-      // 1 s backoff, then one retry.
-      return new Promise(function (res) { setTimeout(res, 1000); }).then(function () {
-        return uploadToImgbb(file, label);
-      });
+      return new Promise(function (res) { setTimeout(res, 1000); })
+        .then(function () { return uploadToImgbb(file, label); });
+    }).then(function (url) {
+      if (url) return url;
+      return new Promise(function (res) { setTimeout(res, 3000); })
+        .then(function () { return uploadToImgbb(file, label); });
     });
   }
 
   // ============================================================
-  // imgbb upload (returns URL string or null on failure)
-  // Compresses first, then uploads the compressed JPEG.
+  // imgbb upload (returns URL string or null on failure).
+  // The file passed here is already compressed - this function only
+  // does the network roundtrip with a 30 s timeout.
   // ============================================================
   function uploadToImgbb(file, label) {
-    return compressImage(file).then(function (compressed) {
-      var fd = new FormData();
-      fd.append('image', compressed);
-      if (label) fd.append('name', label);
-      fd.append('expiration', String(IMGBB_EXPIRATION_SEC));
-      // 20 s timeout via AbortController so a stalled connection doesn't
-      // tie up a worker forever (Instagram IAB sometimes hangs requests).
-      var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
-      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 20000) : null;
-      return fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(IMGBB_KEY), {
-        method: 'POST',
-        body: fd,
-        signal: ctrl ? ctrl.signal : undefined
-      }).then(function (res) {
-        if (timer) clearTimeout(timer);
-        if (!res.ok) return null;
-        return res.json();
-      }).then(function (json) {
-        if (!json || !json.success || !json.data) return null;
-        return json.data.display_url || json.data.url || null;
-      });
-    }).catch(function () { return null; });
+    var fd = new FormData();
+    fd.append('image', file);
+    if (label) fd.append('name', label);
+    fd.append('expiration', String(IMGBB_EXPIRATION_SEC));
+    var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 30000) : null;
+    return fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(IMGBB_KEY), {
+      method: 'POST',
+      body: fd,
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (res) {
+      if (timer) clearTimeout(timer);
+      if (!res.ok) return null;
+      return res.json();
+    }).then(function (json) {
+      if (!json || !json.success || !json.data) return null;
+      return json.data.display_url || json.data.url || null;
+    }).catch(function () {
+      if (timer) clearTimeout(timer);
+      return null;
+    });
   }
 
   function onSuccess(payload) {

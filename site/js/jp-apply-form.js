@@ -31,10 +31,12 @@
   // Image upload constraints (input-side, BEFORE compression).
   // We compress client-side to ~300-500 KB per photo before imgbb upload,
   // so we accept generously-sized originals - even modern iPhone HEIC/JPEG.
+  // Capped at 8 photos: keeps total upload time + IAB failure surface low
+  // while still giving manager 5+ portrait/full-body shots to evaluate.
   var MIN_IMAGES = 5;
-  var MAX_IMAGES = 15;
+  var MAX_IMAGES = 8;
   var MAX_IMAGE_BYTES = 15 * 1024 * 1024;      // 15 MB per image (raw original)
-  var MAX_TOTAL_BYTES = 200 * 1024 * 1024;     // 200 MB combined raw originals
+  var MAX_TOTAL_BYTES = 120 * 1024 * 1024;     // 120 MB combined raw originals (room for 8 x 15 MB)
 
   // Compression settings (final upload to imgbb). Aspect ratio is always
   // preserved - the SAME scale factor is applied to width + height.
@@ -99,7 +101,7 @@
       errorImages: 'Please add 5 photos to continue',
       errorImageType: 'Only JPG, PNG, or WEBP',
       errorImageSize: 'Each photo must be under 15 MB',
-      errorTotalSize: 'Total upload size must be under 200 MB',
+      errorTotalSize: 'Total upload size must be under 120 MB',
       consent: 'By submitting your information, you give your consent for JP Management to contact you to verify your details. If your application is approved, your information may be shared with our network of partners to find you a manager and a team to work with.',
       errorConsent: 'Please confirm to continue',
       footer: '<a href="/Privacy-Policy">Privacy Policy</a>'
@@ -147,7 +149,7 @@
       errorImages: 'Anade 5 fotos para continuar',
       errorImageType: 'Solo JPG, PNG o WEBP',
       errorImageSize: 'Cada foto debe ser menor a 15 MB',
-      errorTotalSize: 'El tamano total debe ser menor a 200 MB',
+      errorTotalSize: 'El tamano total debe ser menor a 120 MB',
       consent: 'Al enviar tus datos, das tu consentimiento para que JP Management se ponga en contacto contigo para verificar tu informacion. Si tu solicitud es aprobada, tu informacion puede ser compartida con nuestra red de partners para encontrarte un manager y un equipo de trabajo.',
       errorConsent: 'Por favor confirma para continuar',
       footer: '<a href="/es/Privacy-Policy">Politica de Privacidad</a>'

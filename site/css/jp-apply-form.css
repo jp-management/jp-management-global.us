@@ -128,13 +128,22 @@
   padding: 10px 12px;
   border: 1.5px solid #e8e8f0;
   border-radius: 10px;
-  font-size: 14px;
+  /* 16px on mobile is REQUIRED - iOS Safari auto-zooms into any input
+     that has font-size < 16px. 14px on desktop where the auto-zoom
+     bug doesn't apply. */
+  font-size: 16px;
   font-family: inherit;
   color: var(--jp-text);
   background: #fff;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   box-sizing: border-box;
   min-height: 40px;
+}
+@media (min-width: 720px) {
+  #jp-apply-form input,
+  #jp-apply-form select {
+    font-size: 14px;
+  }
 }
 #jp-apply-form input:focus,
 #jp-apply-form select:focus {
@@ -193,6 +202,30 @@
   font-family: inherit;
   min-height: 44px;
 }
+/* Spinner shown next to text while form is submitting. Pure CSS - no
+   JS animation cost. Forces user perception that something IS happening
+   even when the imgbb upload is slow / hanging. */
+#jp-apply-submit.is-submitting {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+#jp-apply-submit.is-submitting::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: jp-submit-spin 0.7s linear infinite;
+}
+@keyframes jp-submit-spin {
+  to { transform: rotate(360deg); }
+}
+
 #jp-apply-submit:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 12px 36px rgba(214, 184, 255, 0.4);

@@ -80,6 +80,8 @@
       submitting: 'Submitting...',
       compressing: 'Preparing photos...',
       uploading: 'Uploading photos...',
+      uploadingSlow: '- hang on',
+      uploadingFinishing: '- almost done',
       successTitle: "We've got your application",
       successText: "Our team will reach out within 12 hours via WhatsApp or Telegram. Check your inbox - we just sent a confirmation.",
       successCta: 'Close',
@@ -128,6 +130,8 @@
       submitting: 'Enviando...',
       compressing: 'Preparando fotos...',
       uploading: 'Subiendo fotos...',
+      uploadingSlow: '- un momento',
+      uploadingFinishing: '- ya casi',
       successTitle: 'Hemos recibido tu aplicacion',
       successText: 'Nuestro equipo se pondra en contacto en menos de 12 horas por WhatsApp o Telegram. Revisa tu bandeja - acabamos de enviar una confirmacion.',
       successCta: 'Cerrar',
@@ -469,7 +473,16 @@
     });
 
     Promise.all(promises).then(function (results) {
-      results.forEach(function (r) { if (r) uploadedImages.push(r); });
+      results.forEach(function (r) {
+        if (r) {
+          // Kick off compression NOW (in the background, serial via
+          // bgCompressQueue) so by the time the user hits Submit, the
+          // expensive compression work is already done. Submit then
+          // only needs the upload phase = ~5x faster perceived submit.
+          r.compressedPromise = bgCompress(r.file);
+          uploadedImages.push(r);
+        }
+      });
       // Cap at MAX_IMAGES
       uploadedImages = uploadedImages.slice(0, MAX_IMAGES);
       // Combined size check
@@ -577,13 +590,25 @@
         if (tcleaned !== el.value) el.value = tcleaned;
       }
       if (el.name === 'phone') {
-        // Allow only digits, spaces, dashes, parens; force a leading "+" so
-        // the country code is unambiguous for ops + WhatsApp deeplinks.
+        // Allow only digits, spaces, dashes, parens, plus. Don't auto-
+        // prepend + during typing - if iOS/Android autofills a national
+        // format like "0170..." we'd produce "+0170..." which is invalid
+        // E.164. Country-code injection happens on blur via
+        // upgradePhoneWithCountryCode() instead.
         var pv = el.value.replace(/[^\d+\s()\-]/g, '').replace(/\++/g, '+');
-        if (pv && pv[0] !== '+') pv = '+' + pv;
+        // If user manually typed a "+" anywhere but start, normalise.
+        if (pv.indexOf('+') > 0) pv = '+' + pv.replace(/\+/g, '');
         if (pv !== el.value) el.value = pv;
       }
     });
+
+    // Phone-blur upgrade: when the user (or autofill) leaves the field
+    // without a "+" but the country dropdown is filled, prepend the
+    // dial code so "0170 1234567" becomes "+49 170 1234567".
+    var phoneInput = $('#jp-f-phone');
+    var countryInput = $('#jp-f-country');
+    if (phoneInput) phoneInput.addEventListener('blur', upgradePhoneWithCountryCode);
+    if (countryInput) countryInput.addEventListener('change', upgradePhoneWithCountryCode);
     // Checkbox + datalist <input> often fire `change` instead of `input` when
     // selecting a value - make sure the red state clears for those too.
     $('#jp-apply-form').addEventListener('change', function (e) {
@@ -605,12 +630,19 @@
     renderImageGrid();
     clearFormError();
     setTimeout(function () { var f = $('#jp-f-name'); if (f) f.focus(); }, 280);
+    track('apply_open', {});
+  }
+
+  // Telemetry helper - no-op if jpTrack isn't available yet (e.g. CS off).
+  function track(eventType, eventData) {
+    try { if (typeof window.jpTrack === 'function') window.jpTrack(eventType, eventData); } catch (e) {}
   }
 
   function closeModal() {
     if (!modalEl) return;
     modalEl.classList.remove('is-open');
     document.body.classList.remove('jp-apply-locked');
+    track('apply_close', {});
   }
 
   // ============================================================
@@ -622,6 +654,11 @@
     var formError = $('#jp-form-error');
     formError.classList.remove('is-visible');
     formError.textContent = '';
+
+    // Last-chance phone upgrade: catches the case where the user clicked
+    // submit before blurring the phone field (so the blur listener never
+    // fired). E.g. autofill -> click submit immediately.
+    upgradePhoneWithCountryCode();
 
     // Validate
     var data = {};
@@ -692,7 +729,14 @@
       valid = false;
     }
 
-    if (!valid) return;
+    if (!valid) {
+      track('apply_validation_error', { photo_count: uploadedImages.length });
+      return;
+    }
+    track('apply_submit_attempt', {
+      photo_count: uploadedImages.length,
+      country: data.country || ''
+    });
 
     // Normalize
     data.instagram = stripHandle(data.instagram);
@@ -714,42 +758,96 @@
       fbc = 'fb.1.' + Date.now() + '.' + tracking.fbclid;
     }
 
-    // Submit button state
+    // Submit button state - spinner CSS (always animating) + dynamic text
+    // tier so the user sees motion even when the network stalls. The text
+    // re-renders on a 500 ms heartbeat so the "slow" suffix appears the
+    // moment we cross the 7 s threshold.
     var btn = $('#jp-apply-submit');
     btn.disabled = true;
+    btn.classList.add('is-submitting');
     var origText = btn.textContent;
     btn.textContent = uploadedImages.length ? t.uploading : t.submitting;
-
+    var submitStart = performance.now();
+    var phase = { label: t.uploading || 'Uploading...', done: 0, total: uploadedImages.length };
+    var heartbeat = setInterval(renderBtn, 500);
+    function renderBtn() {
+      var elapsed = performance.now() - submitStart;
+      var slowSuffix = '';
+      if (elapsed > 12000)      slowSuffix = ' ' + (t.uploadingFinishing || '- almost done');
+      else if (elapsed > 7000)  slowSuffix = ' ' + (t.uploadingSlow || '- hang on');
+      btn.textContent = phase.label + ' ' + phase.done + '/' + phase.total + slowSuffix;
+    }
     function setProgress(label, done, total) {
-      btn.textContent = label + ' ' + done + '/' + total;
+      phase.label = label;
+      phase.done = done;
+      phase.total = total;
+      renderBtn();
+    }
+    function clearSubmitState() {
+      clearInterval(heartbeat);
+      btn.classList.remove('is-submitting');
+      btn.disabled = false;
+      btn.textContent = origText;
     }
 
-    // Phase 1: compress photos serially (memory-safe in Instagram IAB).
-    // Phase 2: upload via 2-worker pool with retries.
-    compressAllPhotosSerial(uploadedImages, function (done, total) {
-      setProgress(t.compressing || 'Preparing photos...', done, total);
-    }).then(function (compressed) {
+    // Photos started compressing in the BACKGROUND the moment they were
+    // added (see addFiles). By the time the user hits Submit most/all are
+    // already done - so we just await the existing promises and skip
+    // straight to upload. ~5x faster perceived submit on slow phones.
+    var awaiting = uploadedImages.map(function (img, i) {
+      var p = img.compressedPromise || compressImage(img.file);
+      // If still in flight, surface a "Preparing X/Y" hint so the user
+      // doesn't think it's frozen on the rare slow path.
+      return p;
+    });
+    var doneCount = 0;
+    awaiting.forEach(function (p) {
+      p.then(function () {
+        doneCount++;
+        if (doneCount < awaiting.length) {
+          setProgress(t.compressing || 'Preparing photos...', doneCount, awaiting.length);
+        }
+      });
+    });
+    Promise.all(awaiting).then(function (compressed) {
+      // Switch the label to "Uploading..." the moment Phase 2 starts -
+      // otherwise the button can stay on "Preparing... 4/5" for the
+      // entire upload phase if photo 1's imgbb call hangs.
+      setProgress(t.uploading, 0, compressed.length);
       return uploadAllPhotos(compressed, function (done, total) {
         setProgress(t.uploading, done, total);
       });
-    }).then(function (urls) {
-      // urls: array of strings (or null on per-photo failure).
-      // Important: if ALL photos failed (Instagram IAB / imgbb down), we
-      // still ship the lead with the contact data + a flag. The Meta-ad
-      // money is already spent; capturing the lead and prompting a
-      // WhatsApp follow-up is better than losing them entirely.
-      var ok = urls.filter(Boolean).length;
-      var failed = urls.length - ok;
-      var allFailed = ok === 0 && urls.length > 0;
-
-      // Build flat photo URL fields photo_1_url ... photo_N_url for n8n
-      // mapping into HubSpot custom properties + a comma-joined "photo_urls"
-      // for any single-field destination.
+    }).then(function (results) {
+      // results: array of { url } (imgbb worked) | { b64 } (imgbb failed
+      // but compressed bytes inlined as base64) | null (compression
+      // itself failed - photo lost). Only `null` is a true loss.
+      var urlCount = 0, b64Count = 0, failCount = 0;
       var photoFields = {};
-      urls.forEach(function (u, idx) {
-        photoFields['photo_' + (idx + 1) + '_url'] = u || '';
+      var joinedUrls = [];
+      results.forEach(function (r, idx) {
+        var key = 'photo_' + (idx + 1);
+        if (r && r.url) {
+          photoFields[key + '_url'] = r.url;
+          photoFields[key + '_b64'] = '';
+          joinedUrls.push(r.url);
+          urlCount++;
+        } else if (r && r.b64) {
+          // Photo recovered via base64 fallback. n8n must decode +
+          // re-upload server-side (or store directly). url is empty.
+          photoFields[key + '_url'] = '';
+          photoFields[key + '_b64'] = r.b64;
+          b64Count++;
+        } else {
+          photoFields[key + '_url'] = '';
+          photoFields[key + '_b64'] = '';
+          failCount++;
+        }
       });
-      var joinedUrls = urls.filter(Boolean).join(',');
+      var totalAttempted = results.length;
+      var deliveredCount = urlCount + b64Count;
+      // photo_upload_failed is only true if NOTHING came through at all.
+      // If any photo arrived (url or b64), it's not a "failed" upload.
+      var allFailed = totalAttempted > 0 && deliveredCount === 0;
 
       // Enrich
       var payload = Object.assign({}, data, tracking, {
@@ -766,11 +864,13 @@
         timezone: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
         fbp: fbp,
         fbc: fbc,
-        photo_count: String(ok),
-        photo_count_attempted: String(urls.length),
-        photo_count_failed: String(failed),
+        photo_count: String(deliveredCount),               // total recovered (url + b64)
+        photo_count_attempted: String(totalAttempted),     // how many user uploaded
+        photo_count_failed: String(failCount),             // truly lost (compression failed)
+        photo_count_url: String(urlCount),                 // landed at imgbb directly
+        photo_count_b64: String(b64Count),                 // n8n needs to decode + re-upload
         photo_upload_failed: allFailed ? 'true' : 'false',
-        photo_urls: joinedUrls
+        photo_urls: joinedUrls.join(',')
       }, photoFields);
 
       // POST JSON to n8n
@@ -788,17 +888,32 @@
       // user can complete via WhatsApp, but don't redirect (they should
       // see the WhatsApp button). Lead is already captured server-side.
       if (result.allFailed) {
+        track('apply_submit_all_failed', {
+          duration_ms: Math.round(performance.now() - submitStart),
+          photo_count: result.payload.photo_count,
+          photo_count_attempted: result.payload.photo_count_attempted,
+          country: result.payload.country
+        });
         showWhatsAppFallback(lang);
-        btn.disabled = false;
-        btn.textContent = origText;
+        clearSubmitState();
         return;
       }
+      track('apply_submit_success', {
+        duration_ms: Math.round(performance.now() - submitStart),
+        photo_count_url: result.payload.photo_count_url,
+        photo_count_b64: result.payload.photo_count_b64,
+        photo_count_failed: result.payload.photo_count_failed,
+        country: result.payload.country
+      });
+      // Stop the heartbeat now - onSuccess will redirect, no point
+      // running the interval during the 200 ms pre-redirect window.
+      clearInterval(heartbeat);
       onSuccess(result.payload);
     }).catch(function (err) {
+      track('apply_submit_n8n_failed', { duration_ms: Math.round(performance.now() - submitStart) });
       // Network failure to n8n itself (rare). Still show WhatsApp fallback.
       showWhatsAppFallback(lang);
-      btn.disabled = false;
-      btn.textContent = origText;
+      clearSubmitState();
     });
   }
 
@@ -890,6 +1005,24 @@
   }
 
   // ============================================================
+  // Background compression queue - one photo at a time, in the order
+  // they were added. Memory-safe (max 1 canvas decode in flight).
+  // Returns a promise per photo that resolves to the compressed File.
+  // ============================================================
+  var bgCompressTail = Promise.resolve();
+  function bgCompress(file) {
+    var resolved;
+    var p = new Promise(function (res) { resolved = res; });
+    bgCompressTail = bgCompressTail.then(function () {
+      return compressImage(file).then(function (c) { resolved(c); });
+    }, function () {
+      // Previous compression rejected - keep queue alive
+      return compressImage(file).then(function (c) { resolved(c); });
+    });
+    return p;
+  }
+
+  // ============================================================
   // Photo upload pipeline - 2 phases to avoid Instagram IAB OOM.
   //
   // Phase 1: compress all photos SERIALLY (one at a time). A canvas
@@ -913,34 +1046,65 @@
     return p.then(function () { return compressed; });
   }
 
+  // Each photo's result is { url } if imgbb worked, { b64 } if imgbb
+  // failed but we still got the compressed bytes through to n8n inline,
+  // or null if even compression failed.
+  //
+  // Strategy: try imgbb fast (12 s timeout, 1 retry). If a photo's both
+  // attempts fail, OPEN A CIRCUIT BREAKER - imgbb is treated as down
+  // for the rest of THIS submit, so remaining photos go straight to
+  // base64. Worst-case total: ~25 s instead of ~15 min if imgbb is
+  // dead. Best-case (imgbb up): ~15 s for 5 photos.
   function uploadAllPhotos(compressedFiles, onProgress) {
     var results = new Array(compressedFiles.length);
     var doneCount = 0;
     var idx = 0;
+    var imgbbDown = false; // circuit breaker
     function pickNext() {
       if (idx >= compressedFiles.length) return Promise.resolve();
       var i = idx++;
-      return uploadToImgbbRetried(compressedFiles[i], 'photo_' + (i + 1)).then(function (url) {
-        results[i] = url;
+      var file = compressedFiles[i];
+      var imgbbAttempt = imgbbDown
+        ? Promise.resolve(null)
+        : uploadToImgbbRetried(file, 'photo_' + (i + 1));
+      return imgbbAttempt.then(function (url) {
+        if (url) {
+          results[i] = { url: url };
+          return;
+        }
+        // imgbb attempt(s) failed for this photo. Open the circuit so
+        // all remaining photos skip imgbb and go straight to base64 -
+        // no point in waiting another 25 s per photo when the service
+        // has already proven unreachable.
+        if (!imgbbDown) {
+          // First photo to fail - open the circuit + record the event.
+          track('apply_imgbb_circuit_open', { photo_index: i + 1 });
+          imgbbDown = true;
+        }
+        return fileToBase64(file).then(function (b64) {
+          results[i] = b64 ? { b64: b64 } : null;
+          track('apply_b64_fallback', { photo_index: i + 1, success: !!b64 });
+        });
+      }).then(function () {
         doneCount++;
         if (onProgress) onProgress(doneCount, compressedFiles.length);
         return pickNext();
       });
     }
-    var WORKERS = 2;
+    // Single-worker (was 2). Instagram IAB throttles parallel cross-
+    // origin fetches aggressively; serial = max reliability.
+    var WORKERS = 1;
     var workers = [];
     for (var w = 0; w < WORKERS; w++) workers.push(pickNext());
     return Promise.all(workers).then(function () { return results; });
   }
 
+  // 1 retry with 500 ms backoff. Total worst-case for 1 photo:
+  // 2 attempts x 7 s timeout + 0.5 s backoff = ~14.5 s.
   function uploadToImgbbRetried(file, label) {
     return uploadToImgbb(file, label).then(function (url) {
       if (url) return url;
-      return new Promise(function (res) { setTimeout(res, 1000); })
-        .then(function () { return uploadToImgbb(file, label); });
-    }).then(function (url) {
-      if (url) return url;
-      return new Promise(function (res) { setTimeout(res, 3000); })
+      return new Promise(function (res) { setTimeout(res, 500); })
         .then(function () { return uploadToImgbb(file, label); });
     });
   }
@@ -948,7 +1112,9 @@
   // ============================================================
   // imgbb upload (returns URL string or null on failure).
   // The file passed here is already compressed - this function only
-  // does the network roundtrip with a 30 s timeout.
+  // does the network roundtrip with a 7 s timeout. 200 KB on 3G should
+  // complete in 1-3 s; 7 s leaves a 2x safety margin without
+  // dragging the worst case.
   // ============================================================
   function uploadToImgbb(file, label) {
     var fd = new FormData();
@@ -956,7 +1122,7 @@
     if (label) fd.append('name', label);
     fd.append('expiration', String(IMGBB_EXPIRATION_SEC));
     var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
-    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 30000) : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 7000) : null;
     return fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(IMGBB_KEY), {
       method: 'POST',
       body: fd,
@@ -971,6 +1137,23 @@
     }).catch(function () {
       if (timer) clearTimeout(timer);
       return null;
+    });
+  }
+
+  // Read file as base64 (no data URI prefix). Used as last-resort
+  // fallback so n8n still gets the photo even if imgbb is unreachable.
+  function fileToBase64(file) {
+    return new Promise(function (resolve) {
+      try {
+        var r = new FileReader();
+        r.onload = function () {
+          var s = r.result || '';
+          var i = s.indexOf(',');
+          resolve(i > -1 ? s.slice(i + 1) : s);
+        };
+        r.onerror = function () { resolve(null); };
+        r.readAsDataURL(file);
+      } catch (e) { resolve(null); }
     });
   }
 
@@ -1018,6 +1201,83 @@
     setTimeout(function () {
       window.location.href = THANK_YOU_URLS[redirectLang] || THANK_YOU_URLS.en;
     }, 200);
+  }
+
+  // ============================================================
+  // Country -> international dial code mapping. Used to upgrade a
+  // national-format phone (like "0170 1234567" autofilled from iOS
+  // contacts) into proper E.164 ("+49 170 1234567"). Lookup keys are
+  // normalized: lowercase, diacritic-stripped, EN + ES spellings both
+  // accepted.
+  // ============================================================
+  var COUNTRY_DIAL_CODES = {
+    'germany': '+49', 'alemania': '+49',
+    'austria': '+43',
+    'switzerland': '+41', 'suiza': '+41',
+    'spain': '+34', 'espana': '+34',
+    'france': '+33', 'francia': '+33',
+    'italy': '+39', 'italia': '+39',
+    'netherlands': '+31', 'paises bajos': '+31', 'holanda': '+31',
+    'belgium': '+32', 'belgica': '+32',
+    'sweden': '+46', 'suecia': '+46',
+    'norway': '+47', 'noruega': '+47',
+    'denmark': '+45', 'dinamarca': '+45',
+    'finland': '+358', 'finlandia': '+358',
+    'ireland': '+353', 'irlanda': '+353',
+    'portugal': '+351',
+    'poland': '+48', 'polonia': '+48',
+    'czech republic': '+420', 'republica checa': '+420',
+    'romania': '+40', 'rumania': '+40',
+    'greece': '+30', 'grecia': '+30',
+    'turkey': '+90', 'turquia': '+90',
+    'russia': '+7', 'rusia': '+7',
+    'ukraine': '+380', 'ucrania': '+380',
+    'mexico': '+52',
+    'argentina': '+54',
+    'colombia': '+57',
+    'chile': '+56',
+    'peru': '+51',
+    'venezuela': '+58',
+    'brazil': '+55', 'brasil': '+55',
+    'canada': '+1',
+    'australia': '+61',
+    'new zealand': '+64', 'nueva zelanda': '+64',
+    'united states': '+1', 'usa': '+1',
+    'united kingdom': '+44', 'reino unido': '+44', 'uk': '+44',
+    'united arab emirates': '+971', 'emiratos arabes unidos': '+971',
+    'saudi arabia': '+966', 'arabia saudi': '+966',
+    'israel': '+972'
+  };
+
+  function normalizeCountry(c) {
+    if (!c) return '';
+    var s = String(c).toLowerCase().trim();
+    if (typeof s.normalize === 'function') {
+      s = s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+    return s;
+  }
+
+  function upgradePhoneWithCountryCode() {
+    var phoneInput = $('#jp-f-phone');
+    var countryInput = $('#jp-f-country');
+    if (!phoneInput || !countryInput) return;
+    var phone = (phoneInput.value || '').trim();
+    if (!phone) return;
+    // Already starts with +? leave it.
+    if (phone[0] === '+') return;
+    // If user typed "00..." (international prefix in many EU countries),
+    // convert to "+...".
+    if (phone.indexOf('00') === 0) {
+      phoneInput.value = '+' + phone.slice(2).replace(/^0+/, '');
+      return;
+    }
+    var country = normalizeCountry(countryInput.value);
+    var code = COUNTRY_DIAL_CODES[country];
+    if (!code) return; // unknown country - leave phone for submit-time validation
+    // Strip leading zero(s) from national format (e.g., DE 0170 -> 170)
+    var digitsOnly = phone.replace(/^0+/, '');
+    phoneInput.value = code + ' ' + digitsOnly;
   }
 
   // Spanish-speaking countries (normalized lowercase, no accents). Covers
